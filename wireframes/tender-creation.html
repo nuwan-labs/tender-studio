@@ -1,0 +1,1164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Create New Tender</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* Left Sidebar - Steps */
+        .steps-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            padding: 24px 0;
+        }
+
+        .step-item {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            padding: 16px 24px;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .step-item::before {
+            content: "";
+            position: absolute;
+            left: 39px;
+            top: 48px;
+            width: 2px;
+            height: 32px;
+            background: #e0e0e0;
+        }
+
+        .step-item:last-child::before {
+            display: none;
+        }
+
+        .step-item.complete::before {
+            background: #4caf50;
+        }
+
+        .step-number {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 14px;
+            flex-shrink: 0;
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .step-item.active .step-number {
+            background: #1a237e;
+            color: white;
+        }
+
+        .step-item.complete .step-number {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step-content {
+            flex: 1;
+        }
+
+        .step-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .step-item.active .step-title {
+            color: #1a237e;
+        }
+
+        .step-subtitle {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 32px 48px;
+        }
+
+        .form-section {
+            background: white;
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .section-subtitle {
+            font-size: 13px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-row.single {
+            grid-template-columns: 1fr;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-label {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .form-label .required {
+            color: #c62828;
+        }
+
+        .form-input {
+            padding: 12px 14px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 3px rgba(26,35,126,0.1);
+        }
+
+        .form-input.error {
+            border-color: #c62828;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 6px;
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        /* Items Section */
+        .items-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .items-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .add-item-btn {
+            padding: 8px 16px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border: 1px dashed #1565c0;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .item-card {
+            background: #f9f9f9;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 16px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .item-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .item-number {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .item-badge {
+            width: 28px;
+            height: 28px;
+            background: #1a237e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .item-name-input {
+            font-size: 15px;
+            font-weight: 500;
+            border: none;
+            background: transparent;
+            padding: 4px 0;
+            width: 300px;
+        }
+
+        .item-name-input:focus {
+            outline: none;
+            border-bottom: 2px solid #1a237e;
+        }
+
+        .item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .item-body {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+        }
+
+        .item-body .form-group {
+            margin-bottom: 0;
+        }
+
+        .specs-section {
+            margin-top: 16px;
+            padding-top: 16px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .specs-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .specs-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .specs-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .spec-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .spec-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .spec-btn.primary {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            color: #1565c0;
+        }
+
+        .specs-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .specs-table th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #f0f0f0;
+            font-size: 12px;
+            font-weight: 500;
+            color: #666;
+        }
+
+        .specs-table td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .specs-table input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .compulsory-check {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Document Checklist */
+        .checklist-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .checklist-item input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checklist-item.checked {
+            background: #e8f5e9;
+            border-color: #4caf50;
+        }
+
+        .checklist-label {
+            flex: 1;
+            font-size: 13px;
+            color: #333;
+        }
+
+        .checklist-mandatory {
+            font-size: 11px;
+            color: #c62828;
+        }
+
+        /* Committee Assignment */
+        .committee-section {
+            margin-bottom: 24px;
+        }
+
+        .committee-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .member-selector {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            padding: 16px;
+            background: #f9f9f9;
+            border-radius: 8px;
+            min-height: 80px;
+        }
+
+        .member-chip {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 20px;
+            font-size: 13px;
+        }
+
+        .member-chip.selected {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .member-chip .avatar {
+            width: 24px;
+            height: 24px;
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .member-chip .role-select {
+            padding: 2px 8px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 11px;
+            background: white;
+        }
+
+        .member-chip .remove {
+            cursor: pointer;
+            color: #999;
+        }
+
+        .add-member-btn {
+            padding: 8px 16px;
+            border: 1px dashed #999;
+            background: transparent;
+            border-radius: 20px;
+            color: #666;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        /* Form Navigation */
+        .form-navigation {
+            display: flex;
+            justify-content: space-between;
+            padding: 24px 0;
+            border-top: 1px solid #e0e0e0;
+            margin-top: 24px;
+        }
+
+        .nav-btn {
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .nav-btn.prev {
+            background: white;
+            border: 1px solid #e0e0e0;
+            color: #333;
+        }
+
+        .nav-btn.next {
+            background: #1a237e;
+            border: none;
+            color: white;
+        }
+
+        .nav-btn.save {
+            background: #4caf50;
+            border: none;
+            color: white;
+        }
+
+        /* Right Panel - Help */
+        .help-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .help-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+        }
+
+        .help-content {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        .help-tip {
+            background: #fff8e1;
+            padding: 12px;
+            border-radius: 8px;
+            margin-top: 16px;
+            border-left: 3px solid #ffc107;
+        }
+
+        .help-tip-title {
+            font-weight: 600;
+            color: #f57c00;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+
+        .ai-suggestion {
+            background: #e3f2fd;
+            padding: 16px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+
+        .ai-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: #2196f3;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            margin-bottom: 10px;
+        }
+
+        .ai-suggestion p {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .ai-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .ai-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .ai-btn.accept {
+            background: #4caf50;
+            color: white;
+        }
+
+        .ai-btn.dismiss {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .template-section {
+            margin-top: 24px;
+        }
+
+        .template-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .template-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .template-item:hover {
+            background: #e3f2fd;
+        }
+
+        .template-icon {
+            width: 28px;
+            height: 28px;
+            background: #e0e0e0;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="back-btn">&lt;</button>
+            <h1>Create New Tender</h1>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline">Save as Draft</button>
+            <button class="btn btn-secondary">Preview</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Sidebar - Steps -->
+        <div class="steps-sidebar">
+            <div class="step-item active">
+                <div class="step-number">1</div>
+                <div class="step-content">
+                    <div class="step-title">Basic Information</div>
+                    <div class="step-subtitle">Tender details, PC type, procedure</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">2</div>
+                <div class="step-content">
+                    <div class="step-title">Items & Specifications</div>
+                    <div class="step-subtitle">Define requirements</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">3</div>
+                <div class="step-content">
+                    <div class="step-title">Documents</div>
+                    <div class="step-subtitle">Required documents</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">4</div>
+                <div class="step-content">
+                    <div class="step-title">Committee Assignment</div>
+                    <div class="step-subtitle">BOC & BEC setup</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">5</div>
+                <div class="step-content">
+                    <div class="step-title">Timeline</div>
+                    <div class="step-subtitle">Key dates</div>
+                </div>
+            </div>
+            <div class="step-item">
+                <div class="step-number">6</div>
+                <div class="step-content">
+                    <div class="step-title">Review & Submit</div>
+                    <div class="step-subtitle">Final check</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Basic Information Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Basic Information</div>
+                        <div class="section-subtitle">Core tender identification and configuration</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Tender Title <span class="required">*</span></label>
+                        <input type="text" class="form-input" value="Laboratory Equipment Procurement — SLIBTEC Phase I" placeholder="Enter tender title">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tender Number <span class="required">*</span></label>
+                        <input type="text" class="form-input" value="PR 211-1" placeholder="e.g. PR 211-1">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Procurement Method <span class="required">*</span></label>
+                        <select class="form-input">
+                            <option>NCB — National Competitive Bidding</option>
+                            <option>ICB — International Competitive Bidding</option>
+                            <option>LNB — Limited National Bidding</option>
+                            <option>LIB — Limited International Bidding</option>
+                            <option>Shopping / RFQ</option>
+                            <option>Direct Contracting</option>
+                            <option>Emergency</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Contract Type <span class="required">*</span></label>
+                        <select class="form-input">
+                            <option selected>Goods</option>
+                            <option>Works</option>
+                            <option>Services</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Procurement Committee (PC) Type <span class="required">*</span></label>
+                        <select class="form-input" onchange="updatePCThreshold(this)">
+                            <option value="HLPC">HLPC — High Level (GOSL &gt; LKR 750 Mn)</option>
+                            <option value="SHLPC">SHLPC — Standing High Level (GOSL &gt; LKR 750 Mn)</option>
+                            <option value="MPC">MPC — Ministry (GOSL ≤ LKR 750 Mn)</option>
+                            <option value="DPC" selected>DPC — Departmental (GOSL ≤ LKR 400 Mn) [default]</option>
+                            <option value="PPC">PPC — Project (GOSL ≤ LKR 400 Mn)</option>
+                            <option value="RPC">RPC — Regional (GOSL ≤ LKR 50 Mn)</option>
+                        </select>
+                        <div class="form-hint" id="pcThresholdHint">DPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bidding Procedure <span class="required">*</span></label>
+                        <select class="form-input" onchange="updateProcedureNote(this)">
+                            <option value="SS-1E" selected>Single-Stage One-Envelope (SS-1E) [default]</option>
+                            <option value="SS-2E">Single-Stage Two-Envelope (SS-2E)</option>
+                            <option value="2S">Two-Stage (2S)</option>
+                        </select>
+                        <div class="form-hint" id="procedureNote">Technical and financial proposals in one envelope, opened simultaneously.</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Funding Source <span class="required">*</span></label>
+                        <select class="form-input">
+                            <option selected>GOSL-Funded</option>
+                            <option>Foreign-Funded (FFA)</option>
+                            <option>Mixed</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Total Contract Estimate (TCE) <span class="required">*</span></label>
+                        <input type="text" class="form-input" value="12,500,000" placeholder="LKR (masked until bid opening)">
+                        <div class="form-hint">TCE is masked from all users until bid opening. Must NOT be prepared by the Procurement Manager.</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Specification Preparer <span class="required">*</span></label>
+                        <select class="form-input">
+                            <option value="">— Select officer who prepared specs —</option>
+                            <option>Dr. A. Wickramasinghe (Technical Dept.)</option>
+                            <option>Eng. S. Perera (Engineering Dept.)</option>
+                            <option>Dr. L. Gamage (Research Dept.)</option>
+                        </select>
+                        <div class="form-hint" style="color:#c62828;">⚠ This officer cannot serve on the BEC for this tender (conflict of interest rule).</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">TCE Prepared By <span class="required">*</span></label>
+                        <select class="form-input">
+                            <option value="">— Select officer —</option>
+                            <option>Dr. A. Wickramasinghe (Technical Dept.)</option>
+                            <option>Eng. S. Perera (Engineering Dept.)</option>
+                        </select>
+                        <div class="form-hint" style="color:#c62828;">⚠ Procurement Manager (PM) cannot prepare the TCE.</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dates & Timeline Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Dates &amp; Timeline</div>
+                        <div class="section-subtitle">Key procurement dates with automatic compliance validation</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Publication / Advertisement Date <span class="required">*</span></label>
+                        <input type="date" class="form-input" value="2026-01-15">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Bid Closing Date &amp; Time <span class="required">*</span></label>
+                        <input type="datetime-local" class="form-input" value="2026-02-05T14:00">
+                    </div>
+                </div>
+
+                <div style="background:#fffbeb; border:1px solid #fbd38d; border-radius:8px; padding:12px 16px; margin-bottom:16px;">
+                    <div style="font-size:12px; font-weight:600; color:#744210; margin-bottom:4px;">⚠ Bidding Period Validation</div>
+                    <div style="font-size:13px; color:#333;">
+                        NCB — Estimated value LKR 12.5 Mn — Minimum bidding period: <strong>21 calendar days</strong> (≥ LKR 50 Mn).<br>
+                        Computed period: Publication (Jan 15) → Closing (Feb 05) = <strong style="color:#2e7d32;">21 days ✓</strong>
+                    </div>
+                    <div style="font-size:11px; color:#744210; margin-top:6px;">Rule: NCB ≥ LKR 50 Mn = 21 days min | NCB &lt; LKR 50 Mn = 14 days | ICB = 42 days | Shopping (National) = 7 days</div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Bid Validity Period (days) <span class="required">*</span></label>
+                        <input type="number" class="form-input" value="90" min="30">
+                        <div class="form-hint">Computed expiry: 05 May 2026. Bid Security validity must be ≥ bid validity + 28 days (NCB).</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pre-Bid Meeting Date</label>
+                        <input type="datetime-local" class="form-input" value="2026-01-24T10:00">
+                        <div class="form-hint" style="color:#2e7d32;">✓ 12 days before closing (minimum 10 days required for tenders &gt; LKR 50 Mn).</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bid Security Section -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Bid Security</div>
+                        <div class="section-subtitle">Required bid security configuration</div>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Bid Security Percentage <span class="required">*</span></label>
+                        <input type="number" class="form-input" value="1.5" min="1" max="2" step="0.1">
+                        <div class="form-hint">Valid range: 1% to 2% of TCE (excluding VAT). Computed amount: LKR 187,500.</div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Accepted Security Types</label>
+                        <div style="padding:12px; background:#f9f9f9; border-radius:8px; border:1px solid #e0e0e0;">
+                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;"><input type="checkbox" checked> Bank Guarantee</label>
+                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; margin-bottom:6px;"><input type="checkbox" checked> Cash Deposit</label>
+                            <label style="display:flex; align-items:center; gap:8px; font-size:13px; color:#999;" title="BSD only available for contracts < LKR 20 Mn">
+                                <input type="checkbox" disabled> Bid Securing Declaration (BSD) — disabled: TCE ≥ LKR 20 Mn
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Items Section (Step 2 preview) -->
+            <div class="form-section">
+                <div class="section-header">
+                    <div>
+                        <div class="section-title">Items &amp; Specifications</div>
+                        <div class="section-subtitle">Add items and define technical requirements for each</div>
+                    </div>
+                </div>
+
+                <!-- Item 1 -->
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-number">
+                            <span class="item-badge">1</span>
+                            <input type="text" class="item-name-input" value="Laboratory Incubator" placeholder="Enter item name">
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-btn" title="Duplicate">+</button>
+                            <button class="icon-btn" title="Move Up">^</button>
+                            <button class="icon-btn" title="Move Down">v</button>
+                            <button class="icon-btn" title="Delete">X</button>
+                        </div>
+                    </div>
+
+                    <div class="item-body">
+                        <div class="form-group">
+                            <label class="form-label">Quantity <span class="required">*</span></label>
+                            <input type="number" class="form-input" value="3">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit</label>
+                            <select class="form-input">
+                                <option>Units</option>
+                                <option>Sets</option>
+                                <option>Pairs</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Estimated Unit Price</label>
+                            <input type="text" class="form-input" placeholder="LKR">
+                        </div>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="specs-header">
+                            <span class="specs-title">Technical Specifications (5)</span>
+                            <div class="specs-actions">
+                                <button class="spec-btn primary">Import from Library</button>
+                                <button class="spec-btn">+ Add Requirement</button>
+                            </div>
+                        </div>
+                        <table class="specs-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 40px;">C</th>
+                                    <th style="width: 200px;">Requirement</th>
+                                    <th>Specification</th>
+                                    <th style="width: 80px;">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td><input type="checkbox" class="compulsory-check" checked></td>
+                                    <td><input type="text" value="Temperature Range"></td>
+                                    <td><input type="text" value="Ambient +5C to 80C"></td>
+                                    <td>
+                                        <button class="icon-btn" style="width: 24px; height: 24px;">X</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="compulsory-check" checked></td>
+                                    <td><input type="text" value="Capacity"></td>
+                                    <td><input type="text" value=">= 150 Liters (usable)"></td>
+                                    <td>
+                                        <button class="icon-btn" style="width: 24px; height: 24px;">X</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="compulsory-check" checked></td>
+                                    <td><input type="text" value="Temperature Accuracy"></td>
+                                    <td><input type="text" value="+/- 0.5C"></td>
+                                    <td>
+                                        <button class="icon-btn" style="width: 24px; height: 24px;">X</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="compulsory-check"></td>
+                                    <td><input type="text" value="Display Type"></td>
+                                    <td><input type="text" value="Digital LED/LCD"></td>
+                                    <td>
+                                        <button class="icon-btn" style="width: 24px; height: 24px;">X</button>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><input type="checkbox" class="compulsory-check" checked></td>
+                                    <td><input type="text" value="Power Supply"></td>
+                                    <td><input type="text" value="230V, 50Hz"></td>
+                                    <td>
+                                        <button class="icon-btn" style="width: 24px; height: 24px;">X</button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Item 2 -->
+                <div class="item-card">
+                    <div class="item-header">
+                        <div class="item-number">
+                            <span class="item-badge">2</span>
+                            <input type="text" class="item-name-input" value="Digital Microscope" placeholder="Enter item name">
+                        </div>
+                        <div class="item-actions">
+                            <button class="icon-btn" title="Duplicate">+</button>
+                            <button class="icon-btn" title="Move Up">^</button>
+                            <button class="icon-btn" title="Move Down">v</button>
+                            <button class="icon-btn" title="Delete">X</button>
+                        </div>
+                    </div>
+
+                    <div class="item-body">
+                        <div class="form-group">
+                            <label class="form-label">Quantity <span class="required">*</span></label>
+                            <input type="number" class="form-input" value="5">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Unit</label>
+                            <select class="form-input">
+                                <option selected>Units</option>
+                                <option>Sets</option>
+                                <option>Pairs</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Estimated Unit Price</label>
+                            <input type="text" class="form-input" placeholder="LKR">
+                        </div>
+                    </div>
+
+                    <div class="specs-section">
+                        <div class="specs-header">
+                            <span class="specs-title">Technical Specifications (0)</span>
+                            <div class="specs-actions">
+                                <button class="spec-btn primary">Import from Library</button>
+                                <button class="spec-btn">+ Add Requirement</button>
+                            </div>
+                        </div>
+                        <div style="padding: 24px; text-align: center; color: #999; font-size: 13px;">
+                            No specifications added yet. Import from library or add manually.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Add Item Button -->
+                <div class="items-header">
+                    <button class="add-item-btn">+ Add Another Item</button>
+                </div>
+            </div>
+
+            <!-- Form Navigation -->
+            <div class="form-navigation">
+                <button class="nav-btn prev" style="opacity:0.4; cursor:default;">← (First Step)</button>
+                <button class="nav-btn next">Next: Items &amp; Specifications →</button>
+            </div>
+        </div>
+
+        <!-- Right Panel - Help -->
+        <div class="help-panel">
+            <div class="help-title">Basic Information Help</div>
+            <div class="help-content">
+                <p>Configure the core tender parameters. These settings drive compliance validation throughout the lifecycle.</p>
+            </div>
+
+            <div class="help-tip">
+                <div class="help-tip-title">PC Type matters</div>
+                The PC Type determines your approval authority thresholds, which appeal body applies, and which Shopping limit is permitted.
+            </div>
+
+            <div class="help-tip" style="border-left-color: #805ad5; background:#faf5ff;">
+                <div class="help-tip-title" style="color:#553c9a;">Two-Envelope Procedure</div>
+                SS-2E: Technical and Financial envelopes are separate. BEC evaluates Technical first (without seeing prices). Financial envelopes opened only for Substantially Responsive bidders. Non-Responsive bidders' financial envelopes returned unopened after award.
+            </div>
+
+            <div class="help-tip" style="border-left-color: #c62828; background:#fff5f5;">
+                <div class="help-tip-title" style="color:#c62828;">Critical COI Rules</div>
+                The officer who prepares the technical specifications cannot serve on the BEC. The Procurement Manager cannot prepare the TCE. These are hard blocks in the system.
+            </div>
+
+            <div class="template-section">
+                <div class="help-title">Bidding Period Minimums</div>
+                <div style="font-size: 12px; color: #333; line-height: 1.8;">
+                    <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0f0f0;"><span>ICB / LIB</span><strong>42 days</strong></div>
+                    <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0f0f0;"><span>NCB / LNB ≥ LKR 50 Mn</span><strong>21 days</strong></div>
+                    <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0f0f0;"><span>NCB / LNB &lt; LKR 50 Mn</span><strong>14 days</strong></div>
+                    <div style="display:flex; justify-content:space-between; padding:4px 0; border-bottom:1px solid #f0f0f0;"><span>Shopping (National)</span><strong>7 days</strong></div>
+                    <div style="display:flex; justify-content:space-between; padding:4px 0;"><span>Shopping (International)</span><strong>14 days</strong></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function updatePCThreshold(sel) {
+        const hints = {
+            HLPC: 'HLPC authority: GOSL > LKR 750 Mn | Foreign > LKR 1,500 Mn',
+            SHLPC: 'SHLPC authority: GOSL > LKR 750 Mn | Foreign > LKR 1,500 Mn',
+            MPC: 'MPC authority: GOSL ≤ LKR 750 Mn | Foreign ≤ LKR 1,500 Mn | Shopping ≤ LKR 25 Mn',
+            DPC: 'DPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
+            PPC: 'PPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
+            RPC: 'RPC authority: GOSL ≤ LKR 50 Mn | Foreign ≤ LKR 100 Mn | Shopping ≤ LKR 6 Mn'
+        };
+        document.getElementById('pcThresholdHint').textContent = hints[sel.value] || '';
+    }
+    function updateProcedureNote(sel) {
+        const notes = {
+            'SS-1E': 'Technical and financial proposals in one envelope, opened simultaneously.',
+            'SS-2E': 'Two-Envelope: Technical envelope evaluated first (prices hidden). Financial envelopes opened only for Substantially Responsive bidders at a separate BEC session.',
+            '2S': 'Two-Stage: First stage — unpriced technical proposals; second stage — priced bids based on revised technical requirements.'
+        };
+        document.getElementById('procedureNote').textContent = notes[sel.value] || '';
+    }
+</script>
+</body>
+</html>

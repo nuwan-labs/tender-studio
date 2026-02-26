@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Pre-Bid Meeting</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .tender-ref {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2196f3;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* Left Panel - Meeting Info */
+        .meeting-info-panel {
+            width: 350px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-section {
+            padding: 20px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .info-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 14px;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .meeting-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+
+        .status-dot.scheduled {
+            background: #ff9800;
+        }
+
+        .status-dot.completed {
+            background: #4caf50;
+        }
+
+        .attendees-section {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .attendee-list {
+            padding: 0 20px;
+        }
+
+        .attendee-group {
+            margin-bottom: 20px;
+        }
+
+        .attendee-group-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .attendee-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .attendee-avatar {
+            width: 36px;
+            height: 36px;
+            background: #e3f2fd;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+            color: #1a237e;
+            font-size: 13px;
+        }
+
+        .attendee-avatar.org {
+            background: #f3e5f5;
+            color: #7b1fa2;
+        }
+
+        .attendee-info {
+            flex: 1;
+        }
+
+        .attendee-name {
+            font-size: 14px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .attendee-org {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .attendance-check {
+            width: 20px;
+            height: 20px;
+        }
+
+        .add-attendee-btn {
+            width: 100%;
+            padding: 10px;
+            border: 1px dashed #999;
+            background: transparent;
+            border-radius: 6px;
+            color: #666;
+            cursor: pointer;
+            font-size: 13px;
+            margin-top: 8px;
+        }
+
+        /* Main Content - Q&A */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f9f9f9;
+        }
+
+        .qa-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .qa-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .qa-stats {
+            display: flex;
+            gap: 24px;
+        }
+
+        .qa-stat {
+            text-align: center;
+        }
+
+        .qa-stat-value {
+            font-size: 20px;
+            font-weight: bold;
+            color: #1a237e;
+        }
+
+        .qa-stat-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .qa-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+        }
+
+        .qa-item {
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .qa-question {
+            padding: 16px 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .qa-question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .qa-asker {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .asker-badge {
+            padding: 2px 8px;
+            background: #f3e5f5;
+            color: #7b1fa2;
+            border-radius: 10px;
+            font-size: 11px;
+        }
+
+        .qa-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .qa-question-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .qa-tags {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+        }
+
+        .qa-tag {
+            padding: 3px 8px;
+            background: #e3f2fd;
+            color: #1565c0;
+            border-radius: 4px;
+            font-size: 11px;
+        }
+
+        .qa-answer {
+            padding: 16px 20px;
+            background: #fafafa;
+        }
+
+        .qa-answer-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #666;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .answer-status {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            text-transform: none;
+        }
+
+        .answer-status.answered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .answer-status.pending {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .answer-status.addendum {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .qa-answer-text {
+            font-size: 14px;
+            color: #333;
+            line-height: 1.5;
+        }
+
+        .qa-answer-pending {
+            display: flex;
+            gap: 8px;
+        }
+
+        .answer-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .qa-item-footer {
+            padding: 10px 20px;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .footer-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .footer-action {
+            color: #1a237e;
+            cursor: pointer;
+        }
+
+        /* New Question Input */
+        .new-question {
+            padding: 16px 24px;
+            background: white;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .new-question-input {
+            display: flex;
+            gap: 12px;
+        }
+
+        .question-input {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        /* Right Panel - Addendum */
+        .addendum-panel {
+            width: 380px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .addendum-list {
+            padding: 16px;
+        }
+
+        .addendum-item {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            overflow: hidden;
+        }
+
+        .addendum-header {
+            padding: 12px 16px;
+            background: #f9f9f9;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .addendum-number {
+            font-weight: 600;
+            color: #1a237e;
+        }
+
+        .addendum-date {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .addendum-body {
+            padding: 12px 16px;
+        }
+
+        .addendum-summary {
+            font-size: 13px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .addendum-changes {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .change-item {
+            padding: 4px 0;
+            display: flex;
+            gap: 8px;
+        }
+
+        .change-type {
+            width: 60px;
+            font-weight: 500;
+        }
+
+        .change-type.modify {
+            color: #ff9800;
+        }
+
+        .change-type.add {
+            color: #4caf50;
+        }
+
+        .change-type.clarify {
+            color: #2196f3;
+        }
+
+        .addendum-status {
+            padding: 10px 16px;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .status-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+        }
+
+        .status-badge.draft {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-badge.issued {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        /* Draft Addendum Section */
+        .draft-section {
+            padding: 16px;
+            border-top: 1px solid #e0e0e0;
+            background: #fffde7;
+        }
+
+        .draft-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #f57c00;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .draft-qa-list {
+            background: white;
+            border-radius: 6px;
+            border: 1px solid #ffe082;
+        }
+
+        .draft-qa-item {
+            padding: 10px 12px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .draft-qa-item:last-child {
+            border-bottom: none;
+        }
+
+        .draft-qa-item input {
+            width: 16px;
+            height: 16px;
+            margin-right: 10px;
+        }
+
+        .draft-actions {
+            padding: 16px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .draft-actions .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-warning {
+            background: #ff9800;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="back-btn">&lt;</button>
+            <h1>Pre-Bid Meeting</h1>
+            <span class="tender-ref">PR 211-1</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline">Export Minutes</button>
+            <button class="btn btn-secondary">Issue Addendum</button>
+            <button class="btn btn-primary">End Meeting</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Panel - Meeting Info -->
+        <div class="meeting-info-panel">
+            <div class="info-section">
+                <div class="info-title">Meeting Details</div>
+                <div class="info-row">
+                    <span class="info-label">Status</span>
+                    <span class="meeting-status">
+                        <span class="status-dot scheduled"></span>
+                        <span class="info-value">In Progress</span>
+                    </span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Date</span>
+                    <span class="info-value">January 15, 2024</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Time</span>
+                    <span class="info-value">10:00 AM - 12:00 PM</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Venue</span>
+                    <span class="info-value">Conference Room A</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Duration</span>
+                    <span class="info-value" style="color: #4caf50;">1h 23m</span>
+                </div>
+            </div>
+
+            <div class="info-section">
+                <div class="info-title">Tender Summary</div>
+                <div class="info-row">
+                    <span class="info-label">Title</span>
+                    <span class="info-value">Laboratory Equipment</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Items</span>
+                    <span class="info-value">5</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Est. Value</span>
+                    <span class="info-value">LKR 12,500,000</span>
+                </div>
+                <div class="info-row">
+                    <span class="info-label">Closing Date</span>
+                    <span class="info-value">Feb 28, 2024</span>
+                </div>
+            </div>
+
+            <div class="info-section" style="background:#fff8e1; border-left:3px solid #f57c00;">
+                <div style="font-size:11px; font-weight:600; color:#f57c00; margin-bottom:4px;">Date Validation Warning</div>
+                <div style="font-size:11px; color:#744210;">For tenders &gt; LKR 50 Mn: Pre-bid meeting must be held at least 10 calendar days before bid closing date. Current meeting date (Jan 15, 2024) is 44 days before closing (Feb 28, 2024) — <strong style="color:#2e7d32;">OK</strong>.</div>
+            </div>
+
+            <div class="attendees-section">
+                <div class="info-section" style="border-bottom: none;">
+                    <div class="info-title">Attendance Register</div>
+                </div>
+
+                <div class="attendee-list">
+                    <div class="attendee-group">
+                        <div class="attendee-group-title">
+                            <span>Procuring Entity (3)</span>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">NS</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">N. Silva</div>
+                                <div class="attendee-org">Procurement Manager</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">KP</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">K. Perera</div>
+                                <div class="attendee-org">Technical Expert</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar">MF</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">M. Fernando</div>
+                                <div class="attendee-org">Procurement Assistant</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                    </div>
+
+                    <div class="attendee-group">
+                        <div class="attendee-group-title">
+                            <span>Prospective Bidders (6)</span>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">DF</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">R. Jayawardena</div>
+                                <div class="attendee-org">Delmege Forsyth & Co.</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">AI</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">S. Wijesinghe</div>
+                                <div class="attendee-org">Analytical Instruments</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">HP</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">T. Bandara</div>
+                                <div class="attendee-org">Hayleys PLC</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">LH</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">P. Rathnayake</div>
+                                <div class="attendee-org">Laugfs Holdings</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">JL</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">D. Gunasekera</div>
+                                <div class="attendee-org">JL Morison & Son</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <div class="attendee-item">
+                            <div class="attendee-avatar org">SL</div>
+                            <div class="attendee-info">
+                                <div class="attendee-name">M. Herath</div>
+                                <div class="attendee-org">Scientific Laboratories</div>
+                            </div>
+                            <input type="checkbox" class="attendance-check" checked>
+                        </div>
+                        <button class="add-attendee-btn">+ Add Attendee</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Q&A -->
+        <div class="main-content">
+            <!-- Document Purchasers Registry -->
+            <div style="background:white; border-radius:12px; padding:20px; margin:20px 24px 0; border:1px solid #e0e0e0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:15px; font-weight:600; color:#333;">Document Purchasers Registry</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Companies/individuals who purchased bid documents (separate from meeting attendees)</div>
+                    </div>
+                    <button style="padding:6px 14px; background:#1a237e; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer;">+ Add Purchaser</button>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                    <thead>
+                        <tr style="background:#f5f5f5;">
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Company / Individual</th>
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Purchase Date</th>
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Contact Email</th>
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Attended Meeting?</th>
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Addendum Sent?</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:10px 12px;">Analytical Instruments (Pvt) Ltd</td>
+                            <td style="padding:10px 12px;">Jan 18, 2026</td>
+                            <td style="padding:10px 12px;">info@ai.lk</td>
+                            <td style="padding:10px 12px; text-align:center;"><span style="color:#2e7d32;">Yes</span></td>
+                            <td style="padding:10px 12px; text-align:center;"><input type="checkbox" checked></td>
+                        </tr>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:10px 12px;">Delmege Forsyth & Co. Ltd</td>
+                            <td style="padding:10px 12px;">Jan 19, 2026</td>
+                            <td style="padding:10px 12px;">procurement@delmege.lk</td>
+                            <td style="padding:10px 12px; text-align:center;"><span style="color:#999;">No</span></td>
+                            <td style="padding:10px 12px; text-align:center;"><input type="checkbox"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding:10px 12px;">Hayleys PLC</td>
+                            <td style="padding:10px 12px;">Jan 20, 2026</td>
+                            <td style="padding:10px 12px;">tenders@hayleys.lk</td>
+                            <td style="padding:10px 12px; text-align:center;"><span style="color:#2e7d32;">Yes</span></td>
+                            <td style="padding:10px 12px; text-align:center;"><input type="checkbox"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="margin-top:10px; padding:8px 12px; background:#fff8e1; border-radius:6px; font-size:12px; color:#744210;">
+                    <strong>Addendum Rule:</strong> Any addendum issued as a result of the pre-bid meeting must be distributed to ALL document purchasers (not just meeting attendees) ≥3 working days before bid closing.
+                </div>
+            </div>
+
+            <div class="qa-header">
+                <div class="qa-title">Questions & Answers</div>
+                <div class="qa-stats">
+                    <div class="qa-stat">
+                        <div class="qa-stat-value">12</div>
+                        <div class="qa-stat-label">Total</div>
+                    </div>
+                    <div class="qa-stat">
+                        <div class="qa-stat-value">9</div>
+                        <div class="qa-stat-label">Answered</div>
+                    </div>
+                    <div class="qa-stat">
+                        <div class="qa-stat-value">3</div>
+                        <div class="qa-stat-label">Pending</div>
+                    </div>
+                    <div class="qa-stat">
+                        <div class="qa-stat-value">2</div>
+                        <div class="qa-stat-label">Addendum</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="qa-list">
+                <!-- Q&A Item 1 - Answered -->
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <div class="qa-question-header">
+                            <div class="qa-asker">
+                                <span class="asker-badge">Delmege Forsyth</span>
+                                <span style="font-size: 13px; color: #666;">R. Jayawardena</span>
+                            </div>
+                            <span class="qa-time">10:15 AM</span>
+                        </div>
+                        <div class="qa-question-text">
+                            For Item 1 (Laboratory Incubator), the specification states "capacity >= 150L".
+                            Can you confirm if this is the gross capacity or usable internal capacity?
+                        </div>
+                        <div class="qa-tags">
+                            <span class="qa-tag">Item 1</span>
+                            <span class="qa-tag">Specification Clarification</span>
+                        </div>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-label">
+                            Response
+                            <span class="answer-status answered">Answered</span>
+                        </div>
+                        <div class="qa-answer-text">
+                            The 150L capacity refers to the usable internal capacity. Gross capacity may be
+                            higher depending on the insulation thickness and design of the unit.
+                        </div>
+                    </div>
+                    <div class="qa-item-footer">
+                        <span>Answered by: K. Perera (Technical Expert)</span>
+                        <div class="footer-actions">
+                            <span class="footer-action">Edit</span>
+                            <span class="footer-action">Mark for Addendum</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q&A Item 2 - Requires Addendum -->
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <div class="qa-question-header">
+                            <div class="qa-asker">
+                                <span class="asker-badge">Analytical Instruments</span>
+                                <span style="font-size: 13px; color: #666;">S. Wijesinghe</span>
+                            </div>
+                            <span class="qa-time">10:32 AM</span>
+                        </div>
+                        <div class="qa-question-text">
+                            Item 3 (Spectrophotometer) requires wavelength range 190-1100nm. Our model offers
+                            185-1100nm which exceeds this range. Will this be considered compliant?
+                        </div>
+                        <div class="qa-tags">
+                            <span class="qa-tag">Item 3</span>
+                            <span class="qa-tag">Compliance Query</span>
+                        </div>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-label">
+                            Response
+                            <span class="answer-status addendum">Included in Addendum</span>
+                        </div>
+                        <div class="qa-answer-text">
+                            Yes, specifications that exceed the minimum requirements will be considered compliant.
+                            This will be formally clarified in Addendum No. 1.
+                        </div>
+                    </div>
+                    <div class="qa-item-footer">
+                        <span>Answered by: N. Silva (PM) | Addendum #1</span>
+                        <div class="footer-actions">
+                            <span class="footer-action">Edit</span>
+                            <span class="footer-action">Remove from Addendum</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q&A Item 3 - Pending -->
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <div class="qa-question-header">
+                            <div class="qa-asker">
+                                <span class="asker-badge">Hayleys PLC</span>
+                                <span style="font-size: 13px; color: #666;">T. Bandara</span>
+                            </div>
+                            <span class="qa-time">11:05 AM</span>
+                        </div>
+                        <div class="qa-question-text">
+                            The tender document mentions "training for end users" but doesn't specify duration
+                            or number of trainees. Can you please clarify the training requirements?
+                        </div>
+                        <div class="qa-tags">
+                            <span class="qa-tag">General</span>
+                            <span class="qa-tag">Training</span>
+                        </div>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-label">
+                            Response
+                            <span class="answer-status pending">Pending</span>
+                        </div>
+                        <div class="qa-answer-pending">
+                            <input type="text" class="answer-input" placeholder="Type response here...">
+                            <button class="btn btn-primary">Submit</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Q&A Item 4 - Answered -->
+                <div class="qa-item">
+                    <div class="qa-question">
+                        <div class="qa-question-header">
+                            <div class="qa-asker">
+                                <span class="asker-badge">Laugfs Holdings</span>
+                                <span style="font-size: 13px; color: #666;">P. Rathnayake</span>
+                            </div>
+                            <span class="qa-time">11:18 AM</span>
+                        </div>
+                        <div class="qa-question-text">
+                            What is the acceptable format for the bid security? Can we provide a
+                            bank guarantee from any commercial bank or only from specified banks?
+                        </div>
+                        <div class="qa-tags">
+                            <span class="qa-tag">Bid Security</span>
+                            <span class="qa-tag">Commercial Terms</span>
+                        </div>
+                    </div>
+                    <div class="qa-answer">
+                        <div class="qa-answer-label">
+                            Response
+                            <span class="answer-status answered">Answered</span>
+                        </div>
+                        <div class="qa-answer-text">
+                            Bid security can be provided as an unconditional bank guarantee from any
+                            licensed commercial bank in Sri Lanka. The format should follow the template
+                            provided in Annex B of the tender document.
+                        </div>
+                    </div>
+                    <div class="qa-item-footer">
+                        <span>Answered by: N. Silva (PM)</span>
+                        <div class="footer-actions">
+                            <span class="footer-action">Edit</span>
+                            <span class="footer-action">Mark for Addendum</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="new-question">
+                <div class="new-question-input">
+                    <input type="text" class="question-input" placeholder="Record a new question...">
+                    <button class="btn btn-secondary">Add Question</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Addendum -->
+        <div class="addendum-panel">
+            <div class="panel-header">
+                <span class="panel-title">Addenda</span>
+                <button class="btn btn-primary" style="padding: 6px 12px; font-size: 12px;">+ New</button>
+            </div>
+
+            <div class="panel-content">
+                <div class="addendum-list">
+                    <!-- Addendum 1 - Issued -->
+                    <div class="addendum-item">
+                        <div class="addendum-header">
+                            <span class="addendum-number">Addendum No. 1</span>
+                            <span class="addendum-date">Jan 15, 2024</span>
+                        </div>
+                        <div class="addendum-body">
+                            <div class="addendum-summary">
+                                Clarifications on technical specifications and compliance interpretation
+                            </div>
+                            <div class="addendum-changes">
+                                <div class="change-item">
+                                    <span class="change-type clarify">Clarify</span>
+                                    <span>Specs exceeding minimum = compliant</span>
+                                </div>
+                                <div class="change-item">
+                                    <span class="change-type modify">Modify</span>
+                                    <span>Extended bid validity to 120 days</span>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="addendum-status">
+                            <span class="status-badge issued">Issued</span>
+                            <span>Sent to 15 bidders</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Draft Addendum -->
+                <div class="draft-section">
+                    <div class="draft-title">
+                        Draft Addendum No. 2
+                    </div>
+                    <div class="draft-qa-list">
+                        <div class="draft-qa-item">
+                            <input type="checkbox" checked>
+                            Training requirements clarification (pending answer)
+                        </div>
+                        <div class="draft-qa-item">
+                            <input type="checkbox">
+                            Item 4 voltage specification update
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="draft-actions">
+                <button class="btn btn-secondary">Preview</button>
+                <button class="btn btn-warning">Issue Addendum</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

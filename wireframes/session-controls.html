@@ -1,0 +1,1098 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Session Controls</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #1a202c;
+            color: #333;
+            min-height: 100vh;
+        }
+
+        /* Demo Container */
+        .demo-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .demo-title {
+            color: white;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .demo-title h1 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .demo-title p {
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        .demo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 30px;
+        }
+
+        .demo-section {
+            background: #2d3748;
+            border-radius: 12px;
+            padding: 24px;
+        }
+
+        .demo-section h2 {
+            color: #e2e8f0;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #4a5568;
+        }
+
+        /* Common Styles */
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            cursor: pointer;
+            border: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2c5282;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #38a169;
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #dd6b20;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .btn-secondary {
+            background: #4a5568;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #718096;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 2px solid #4a5568;
+            color: #e2e8f0;
+        }
+
+        .btn-outline:hover {
+            border-color: #718096;
+            background: #4a5568;
+        }
+
+        .btn-lg {
+            padding: 14px 28px;
+            font-size: 16px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .modal-header .subtitle {
+            font-size: 13px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #a0aec0;
+            cursor: pointer;
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: #f7fafc;
+        }
+
+        /* Start Session Modal */
+        .session-info-card {
+            background: #ebf8ff;
+            border: 1px solid #90cdf4;
+            border-radius: 12px;
+            padding: 16px;
+            margin-bottom: 20px;
+        }
+
+        .session-info-card .title {
+            font-weight: 600;
+            color: #2c5282;
+            margin-bottom: 4px;
+        }
+
+        .session-info-card .ref {
+            font-size: 13px;
+            color: #4a5568;
+        }
+
+        .section-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .attendance-grid {
+            display: grid;
+            gap: 8px;
+        }
+
+        .member-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f7fafc;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        .member-row.checked {
+            background: #f0fff4;
+            border-color: #9ae6b4;
+        }
+
+        .member-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+        }
+
+        .member-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .member-role {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .role-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .role-badge.chair {
+            background: #faf5ff;
+            color: #6b46c1;
+        }
+
+        .role-badge.secretary {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .role-badge.member {
+            background: #f7fafc;
+            color: #718096;
+        }
+
+        /* Active Session Panel */
+        .session-panel {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            border-radius: 16px;
+            padding: 24px;
+            color: white;
+        }
+
+        .session-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .session-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #48bb78;
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.paused {
+            background: #ed8936;
+            animation: none;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.1); }
+        }
+
+        .session-label {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .session-title-text {
+            font-size: 16px;
+            font-weight: 600;
+        }
+
+        .timer-display {
+            text-align: right;
+        }
+
+        .timer-label {
+            font-size: 11px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .timer-value {
+            font-size: 36px;
+            font-weight: 300;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 2px;
+        }
+
+        .session-controls {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .session-controls .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .attendance-summary {
+            background: rgba(255,255,255,0.1);
+            border-radius: 12px;
+            padding: 16px;
+        }
+
+        .attendance-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .attendance-header h4 {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .attendance-count {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        .attendee-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+        .attendee-chip {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(255,255,255,0.15);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+        }
+
+        .attendee-chip .dot {
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: #48bb78;
+        }
+
+        .attendee-chip.absent .dot {
+            background: #e53e3e;
+        }
+
+        .attendee-chip.absent {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        /* Write Access Panel */
+        .access-panel {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+        }
+
+        .access-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .access-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .access-header p {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .access-list {
+            padding: 12px;
+        }
+
+        .access-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+
+        .access-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .access-item.has-access {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+        }
+
+        .access-item.no-access {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .access-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .access-item.has-access .access-avatar {
+            background: #48bb78;
+            color: white;
+        }
+
+        .access-info {
+            flex: 1;
+        }
+
+        .access-name {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .access-status {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .access-item.has-access .access-status {
+            color: #276749;
+        }
+
+        .access-toggle {
+            padding: 6px 14px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            border: none;
+            font-weight: 500;
+        }
+
+        .access-toggle.grant {
+            background: #48bb78;
+            color: white;
+        }
+
+        .access-toggle.revoke {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        /* End Session Modal */
+        .summary-stats {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .summary-stat {
+            text-align: center;
+            padding: 16px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .summary-stat .value {
+            font-size: 24px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .summary-stat .label {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .summary-stat.highlight {
+            background: #ebf8ff;
+        }
+
+        .summary-stat.highlight .value {
+            color: #2b6cb0;
+        }
+
+        .activity-log {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 16px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .log-item {
+            display: flex;
+            gap: 12px;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+            font-size: 13px;
+        }
+
+        .log-item:last-child {
+            border-bottom: none;
+        }
+
+        .log-time {
+            color: #a0aec0;
+            font-family: monospace;
+            font-size: 12px;
+            min-width: 60px;
+        }
+
+        .log-action {
+            color: #4a5568;
+        }
+
+        .log-action strong {
+            color: #2d3748;
+        }
+
+        /* Floating Session Bar */
+        .floating-bar {
+            background: linear-gradient(135deg, #1a365d, #2c5282);
+            border-radius: 50px;
+            padding: 8px 8px 8px 20px;
+            display: inline-flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        .floating-bar .status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .floating-bar .timer {
+            font-family: monospace;
+            font-size: 18px;
+            font-weight: 500;
+            background: rgba(255,255,255,0.1);
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .floating-bar .actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .floating-bar .action-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            transition: transform 0.2s;
+        }
+
+        .floating-bar .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .floating-bar .action-btn.pause {
+            background: #ed8936;
+            color: white;
+        }
+
+        .floating-bar .action-btn.end {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .floating-bar .action-btn.fullscreen {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        /* Pause overlay */
+        .pause-overlay {
+            position: relative;
+            background: #fffbeb;
+            border: 2px solid #ed8936;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .pause-overlay .icon {
+            font-size: 48px;
+            margin-bottom: 12px;
+        }
+
+        .pause-overlay h3 {
+            color: #c05621;
+            margin-bottom: 8px;
+        }
+
+        .pause-overlay p {
+            color: #975a16;
+            font-size: 14px;
+            margin-bottom: 16px;
+        }
+
+        .pause-timer {
+            font-size: 32px;
+            font-family: monospace;
+            color: #c05621;
+            margin-bottom: 16px;
+        }
+    </style>
+</head>
+<body>
+    <div class="demo-container">
+        <div class="demo-title">
+            <h1>Session Controls - UI Components</h1>
+            <p>BEC evaluation session management interface elements</p>
+        </div>
+
+        <div class="demo-grid">
+            <!-- Start Session Modal -->
+            <div class="demo-section">
+                <h2>1. Start Session Modal</h2>
+                <div class="modal">
+                    <div class="modal-header">
+                        <div>
+                            <h3>Start Evaluation Session</h3>
+                            <div class="subtitle">Mark attendance and begin recording</div>
+                        </div>
+                        <button class="close-btn">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="session-info-card">
+                            <div class="title">PR 211-1: Laboratory Equipment - SLIBTEC Phase I</div>
+                            <div class="ref">Item 1 of 5: Refrigerated Microcentrifuge • 11 Bidders</div>
+                        </div>
+
+                        <div style="background:#faf5ff; border:1px solid #d6bcfa; border-radius:8px; padding:16px; margin-bottom:20px;">
+                            <div style="font-size:13px; font-weight:600; color:#553c9a; margin-bottom:12px;">
+                                🔒 COI Declarations — Required Before Evaluation Begins
+                            </div>
+                            <div style="font-size:12px; color:#666; margin-bottom:12px;">
+                                All BEC members (Annexure I) and supporting staff (Annexure II) must sign Conflict of Interest declarations at the first meeting. Evaluation cannot begin until all declarations are recorded.
+                            </div>
+                            <table style="width:100%; font-size:12px; border-collapse:collapse;">
+                                <thead>
+                                    <tr style="background:#ede9fe;">
+                                        <th style="padding:8px 10px; text-align:left; font-weight:500;">Name</th>
+                                        <th style="padding:8px 10px; text-align:center; font-weight:500;">Role</th>
+                                        <th style="padding:8px 10px; text-align:center; font-weight:500;">Form</th>
+                                        <th style="padding:8px 10px; text-align:center; font-weight:500;">Signed?</th>
+                                        <th style="padding:8px 10px; text-align:center; font-weight:500;">Conflict?</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr style="border-bottom:1px solid #ede9fe;">
+                                        <td style="padding:8px 10px;">Dr. Jayantha Senanayaka</td>
+                                        <td style="padding:8px 10px; text-align:center;">Chair</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#553c9a;">Annexure I</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#2e7d32;">✓ Signed</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#999;">None</td>
+                                    </tr>
+                                    <tr style="border-bottom:1px solid #ede9fe;">
+                                        <td style="padding:8px 10px;">Mr. Nuwan Medawaththa</td>
+                                        <td style="padding:8px 10px; text-align:center;">Secretary</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#553c9a;">Annexure I</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#2e7d32;">✓ Signed</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#999;">None</td>
+                                    </tr>
+                                    <tr style="border-bottom:1px solid #ede9fe;">
+                                        <td style="padding:8px 10px;">Snr. Prof. B.G.D.N.K. de Silva</td>
+                                        <td style="padding:8px 10px; text-align:center;">Member</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#553c9a;">Annexure I</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#2e7d32;">✓ Signed</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#999;">None</td>
+                                    </tr>
+                                    <tr style="border-bottom:1px solid #ede9fe;">
+                                        <td style="padding:8px 10px;">Dr. Dananjaya Perera</td>
+                                        <td style="padding:8px 10px; text-align:center;">Member</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#553c9a;">Annexure I</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#e53e3e;">○ Pending</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#999;">—</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="padding:8px 10px;">Ms. K. Jayawardena (PMD Officer)</td>
+                                        <td style="padding:8px 10px; text-align:center;">Support Staff</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#4a5568;">Annexure II</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#2e7d32;">✓ Signed</td>
+                                        <td style="padding:8px 10px; text-align:center; color:#999;">None</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <div style="margin-top:10px; padding:8px; background:#fee2e2; border-radius:6px; font-size:11px; color:#991b1b;">
+                                ⚠ 1 member has not yet signed COI declaration. Evaluation session cannot begin until all declarations are recorded.
+                            </div>
+                        </div>
+
+                        <div class="section-title">
+                            <span>👥</span> Committee Attendance
+                        </div>
+                        <div class="attendance-grid">
+                            <label class="member-row checked">
+                                <input type="checkbox" class="member-checkbox" checked>
+                                <div class="member-avatar">JS</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Jayantha Senanayaka</div>
+                                    <div class="member-role">Research Professor, SLIBTEC</div>
+                                </div>
+                                <span class="role-badge chair">Chair</span>
+                            </label>
+                            <label class="member-row checked">
+                                <input type="checkbox" class="member-checkbox" checked>
+                                <div class="member-avatar">NM</div>
+                                <div class="member-info">
+                                    <div class="member-name">Mr. Nuwan Medawaththa</div>
+                                    <div class="member-role">Research Assistant, SLIBTEC</div>
+                                </div>
+                                <span class="role-badge secretary">Secretary</span>
+                            </label>
+                            <label class="member-row checked">
+                                <input type="checkbox" class="member-checkbox" checked>
+                                <div class="member-avatar">BS</div>
+                                <div class="member-info">
+                                    <div class="member-name">Snr. Prof. B.G.D.N.K. de Silva</div>
+                                    <div class="member-role">Senior Professor, USJ</div>
+                                </div>
+                                <span class="role-badge member">Member</span>
+                            </label>
+                            <label class="member-row">
+                                <input type="checkbox" class="member-checkbox">
+                                <div class="member-avatar">DP</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Dananjaya Perera</div>
+                                    <div class="member-role">Research Scientist, SLIBTEC</div>
+                                </div>
+                                <span class="role-badge member">Member</span>
+                            </label>
+                            <label class="member-row checked">
+                                <input type="checkbox" class="member-checkbox" checked>
+                                <div class="member-avatar">PG</div>
+                                <div class="member-info">
+                                    <div class="member-name">Dr. Peshala Gunasekara</div>
+                                    <div class="member-role">Research Scientist, SLIBTEC</div>
+                                </div>
+                                <span class="role-badge member">Member</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-success">▶ Start Session</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Active Session Panel -->
+            <div class="demo-section">
+                <h2>2. Active Session Panel</h2>
+                <div class="session-panel">
+                    <div class="session-header">
+                        <div class="session-status">
+                            <div class="status-dot"></div>
+                            <div>
+                                <div class="session-label">Session Active</div>
+                                <div class="session-title-text">PR 211-1: Item 1 Evaluation</div>
+                            </div>
+                        </div>
+                        <div class="timer-display">
+                            <div class="timer-label">Duration</div>
+                            <div class="timer-value" id="timer">01:23:45</div>
+                        </div>
+                    </div>
+
+                    <div class="session-controls">
+                        <button class="btn btn-warning">⏸ Pause</button>
+                        <button class="btn btn-danger">⏹ End Session</button>
+                    </div>
+
+                    <div class="attendance-summary">
+                        <div class="attendance-header">
+                            <h4>Attendance</h4>
+                            <span class="attendance-count">4 of 5 present</span>
+                        </div>
+                        <div class="attendee-list">
+                            <div class="attendee-chip">
+                                <span class="dot"></span>
+                                Dr. Senanayaka (Chair)
+                            </div>
+                            <div class="attendee-chip">
+                                <span class="dot"></span>
+                                Mr. Nuwan (Secretary)
+                            </div>
+                            <div class="attendee-chip">
+                                <span class="dot"></span>
+                                Prof. de Silva
+                            </div>
+                            <div class="attendee-chip absent">
+                                <span class="dot"></span>
+                                Dr. Perera
+                            </div>
+                            <div class="attendee-chip">
+                                <span class="dot"></span>
+                                Dr. Gunasekara
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Write Access Control -->
+            <div class="demo-section">
+                <h2>3. Write Access Control (Secretary Only)</h2>
+                <div class="access-panel">
+                    <div class="access-header">
+                        <h4>Temporary Write Access</h4>
+                        <p>Grant members write access for specific items during this session</p>
+                    </div>
+                    <div class="access-list">
+                        <div class="access-item has-access">
+                            <div class="access-avatar">NM</div>
+                            <div class="access-info">
+                                <div class="access-name">Mr. Nuwan Medawaththa</div>
+                                <div class="access-status">Secretary - Always has access</div>
+                            </div>
+                            <span style="font-size:12px; color:#718096;">Default</span>
+                        </div>
+                        <div class="access-item has-access">
+                            <div class="access-avatar">PG</div>
+                            <div class="access-info">
+                                <div class="access-name">Dr. Peshala Gunasekara</div>
+                                <div class="access-status">✓ Write access granted (Item 1)</div>
+                            </div>
+                            <button class="access-toggle revoke">Revoke</button>
+                        </div>
+                        <div class="access-item no-access">
+                            <div class="access-avatar">BS</div>
+                            <div class="access-info">
+                                <div class="access-name">Snr. Prof. B.G.D.N.K. de Silva</div>
+                                <div class="access-status">Read-only access</div>
+                            </div>
+                            <button class="access-toggle grant">Grant</button>
+                        </div>
+                        <div class="access-item no-access">
+                            <div class="access-avatar">JS</div>
+                            <div class="access-info">
+                                <div class="access-name">Dr. Jayantha Senanayaka</div>
+                                <div class="access-status">Chair - Approves via Secretary</div>
+                            </div>
+                            <button class="access-toggle grant">Grant</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Session Paused -->
+            <div class="demo-section">
+                <h2>4. Session Paused State</h2>
+                <div class="pause-overlay">
+                    <div class="icon">⏸️</div>
+                    <h3>Session Paused</h3>
+                    <p>The evaluation session is currently paused. All changes are saved.</p>
+                    <div class="pause-timer">00:15:32</div>
+                    <button class="btn btn-success btn-lg">▶ Resume Session</button>
+                </div>
+            </div>
+
+            <!-- Floating Session Bar -->
+            <div class="demo-section" style="grid-column: span 2;">
+                <h2>5. Floating Session Bar (Compact Mode)</h2>
+                <div style="display: flex; justify-content: center; padding: 30px 0;">
+                    <div class="floating-bar">
+                        <div class="status">
+                            <div class="status-dot"></div>
+                            <span>Session Active</span>
+                        </div>
+                        <div class="timer">01:23:45</div>
+                        <div class="actions">
+                            <button class="action-btn fullscreen" title="Toggle Fullscreen">⛶</button>
+                            <button class="action-btn pause" title="Pause Session">⏸</button>
+                            <button class="action-btn end" title="End Session">⏹</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- End Session Modal -->
+            <div class="demo-section" style="grid-column: span 2;">
+                <h2>6. End Session Summary</h2>
+                <div class="modal" style="max-width: 600px; margin: 0 auto;">
+                    <div class="modal-header">
+                        <div>
+                            <h3>End Evaluation Session</h3>
+                            <div class="subtitle">Review session summary before closing</div>
+                        </div>
+                        <button class="close-btn">×</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="summary-stats">
+                            <div class="summary-stat highlight">
+                                <div class="value">01:45:32</div>
+                                <div class="label">Duration</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="value">24</div>
+                                <div class="label">Decisions Made</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="value">2</div>
+                                <div class="label">Clarifications Sent</div>
+                            </div>
+                            <div class="summary-stat">
+                                <div class="value">4/5</div>
+                                <div class="label">Members Present</div>
+                            </div>
+                        </div>
+
+                        <div class="section-title">Session Activity Log</div>
+                        <div class="activity-log">
+                            <div class="log-item">
+                                <span class="log-time">10:00</span>
+                                <span class="log-action">Session started by <strong>Mr. Nuwan</strong></span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">10:15</span>
+                                <span class="log-action">Write access granted to <strong>Dr. Gunasekara</strong></span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">10:32</span>
+                                <span class="log-action"><strong>12 requirements</strong> evaluated for Delmege Forsyth</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">10:48</span>
+                                <span class="log-action">Clarification sent to <strong>P&T Trading</strong> (CE-IVD cert)</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">11:05</span>
+                                <span class="log-action">Session paused (15 min break)</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">11:20</span>
+                                <span class="log-action">Session resumed</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">11:35</span>
+                                <span class="log-action"><strong>12 requirements</strong> evaluated for Research Instruments</span>
+                            </div>
+                            <div class="log-item">
+                                <span class="log-time">11:45</span>
+                                <span class="log-action">Clarification sent to <strong>Bhoomi Tech</strong> (Warranty)</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn btn-secondary">Cancel</button>
+                        <button class="btn btn-primary">Download Report</button>
+                        <button class="btn btn-danger">End Session</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Timer simulation
+        let seconds = 5025;
+        setInterval(() => {
+            seconds++;
+            const h = Math.floor(seconds / 3600);
+            const m = Math.floor((seconds % 3600) / 60);
+            const s = seconds % 60;
+            const timeStr = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+            document.getElementById('timer').textContent = timeStr;
+        }, 1000);
+
+        // Member row toggle
+        document.querySelectorAll('.member-row').forEach(row => {
+            const checkbox = row.querySelector('.member-checkbox');
+            checkbox.addEventListener('change', () => {
+                row.classList.toggle('checked', checkbox.checked);
+            });
+        });
+
+        // Access toggle simulation
+        document.querySelectorAll('.access-toggle').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const item = btn.closest('.access-item');
+                if (btn.classList.contains('grant')) {
+                    item.classList.remove('no-access');
+                    item.classList.add('has-access');
+                    item.querySelector('.access-avatar').style.background = '#48bb78';
+                    item.querySelector('.access-avatar').style.color = 'white';
+                    item.querySelector('.access-status').textContent = '✓ Write access granted';
+                    item.querySelector('.access-status').style.color = '#276749';
+                    btn.textContent = 'Revoke';
+                    btn.classList.remove('grant');
+                    btn.classList.add('revoke');
+                } else {
+                    item.classList.remove('has-access');
+                    item.classList.add('no-access');
+                    item.querySelector('.access-avatar').style.background = '#e2e8f0';
+                    item.querySelector('.access-avatar').style.color = '#4a5568';
+                    item.querySelector('.access-status').textContent = 'Read-only access';
+                    item.querySelector('.access-status').style.color = '#718096';
+                    btn.textContent = 'Grant';
+                    btn.classList.remove('revoke');
+                    btn.classList.add('grant');
+                }
+            });
+        });
+    </script>
+</body>
+</html>

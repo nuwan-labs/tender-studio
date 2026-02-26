@@ -1,0 +1,1316 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Bidder Detail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+        }
+
+        /* Header */
+        .header {
+            background: #1a365d;
+            color: white;
+            padding: 12px 24px;
+        }
+
+        .header-breadcrumb {
+            font-size: 12px;
+            opacity: 0.7;
+            margin-bottom: 4px;
+        }
+
+        .header-breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .bidder-logo {
+            width: 48px;
+            height: 48px;
+            background: white;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            font-weight: 600;
+            color: #1a365d;
+        }
+
+        .header-title h1 {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .header-subtitle {
+            font-size: 13px;
+            opacity: 0.8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-top: 2px;
+        }
+
+        .status-badge {
+            padding: 3px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.responsive {
+            background: #48bb78;
+            color: white;
+        }
+
+        .status-badge.non-responsive {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .status-badge.under-evaluation {
+            background: #3182ce;
+            color: white;
+        }
+
+        .status-badge.partial {
+            background: #ed8936;
+            color: white;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-light {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .btn-light:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 320px 1fr;
+            gap: 24px;
+            padding: 24px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .card-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .card-header .action {
+            font-size: 12px;
+            color: #3182ce;
+            cursor: pointer;
+        }
+
+        .card-body {
+            padding: 16px;
+        }
+
+        /* Company Info */
+        .info-row {
+            display: flex;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            width: 100px;
+            font-size: 12px;
+            color: #718096;
+            flex-shrink: 0;
+        }
+
+        .info-value {
+            font-size: 13px;
+            color: #2d3748;
+        }
+
+        /* Bid Summary */
+        .bid-stat {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .bid-stat:last-child {
+            border-bottom: none;
+        }
+
+        .bid-stat .label {
+            font-size: 13px;
+            color: #718096;
+        }
+
+        .bid-stat .value {
+            font-size: 14px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .bid-stat .value.price {
+            color: #2b6cb0;
+        }
+
+        /* Bid Security */
+        .security-card {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 8px;
+            padding: 12px;
+            margin-top: 12px;
+        }
+
+        .security-card.warning {
+            background: #fffbeb;
+            border-color: #fbd38d;
+        }
+
+        .security-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .security-header .label {
+            font-size: 12px;
+            font-weight: 500;
+            color: #276749;
+        }
+
+        .security-card.warning .security-header .label {
+            color: #975a16;
+        }
+
+        .security-status {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+            background: #48bb78;
+            color: white;
+        }
+
+        .security-card.warning .security-status {
+            background: #ed8936;
+        }
+
+        .security-details {
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .security-details div {
+            margin-bottom: 4px;
+        }
+
+        /* Document Checklist */
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .doc-item:last-child {
+            border-bottom: none;
+        }
+
+        .doc-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .doc-check.submitted {
+            background: #48bb78;
+            color: white;
+        }
+
+        .doc-check.missing {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .doc-name {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .doc-name.missing {
+            color: #c53030;
+        }
+
+        .doc-action {
+            font-size: 12px;
+            color: #3182ce;
+            cursor: pointer;
+        }
+
+        /* History */
+        .history-item {
+            padding: 12px 0;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .history-item:last-child {
+            border-bottom: none;
+        }
+
+        .history-tender {
+            font-size: 13px;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .history-meta {
+            font-size: 11px;
+            color: #718096;
+            display: flex;
+            gap: 12px;
+        }
+
+        .history-result {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .history-result.awarded {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .history-result.not-awarded {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        /* Main Content */
+        .main-content {
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 4px;
+            background: white;
+            padding: 4px;
+            border-radius: 10px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .tab {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            color: #4a5568;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab:hover {
+            background: #f7fafc;
+        }
+
+        .tab.active {
+            background: #3182ce;
+            color: white;
+        }
+
+        .tab .badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            background: rgba(0,0,0,0.1);
+        }
+
+        .tab.active .badge {
+            background: rgba(255,255,255,0.3);
+        }
+
+        /* Compliance Overview */
+        .compliance-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 12px;
+        }
+
+        .compliance-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid transparent;
+        }
+
+        .compliance-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .compliance-card.active {
+            border-color: #3182ce;
+        }
+
+        .compliance-card.responsive {
+            border-left: 4px solid #48bb78;
+        }
+
+        .compliance-card.non-responsive {
+            border-left: 4px solid #e53e3e;
+        }
+
+        .compliance-card.pending {
+            border-left: 4px solid #a0aec0;
+        }
+
+        .item-number {
+            font-size: 11px;
+            color: #718096;
+            margin-bottom: 4px;
+        }
+
+        .item-name {
+            font-size: 13px;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 12px;
+            min-height: 36px;
+        }
+
+        .compliance-stats {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 8px;
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .stat-value.accept {
+            color: #48bb78;
+        }
+
+        .stat-value.reject {
+            color: #e53e3e;
+        }
+
+        .stat-value.pending {
+            color: #a0aec0;
+        }
+
+        .stat-label {
+            font-size: 10px;
+            color: #718096;
+        }
+
+        .compliance-bar {
+            height: 6px;
+            background: #e2e8f0;
+            border-radius: 3px;
+            overflow: hidden;
+            display: flex;
+        }
+
+        .bar-segment {
+            height: 100%;
+        }
+
+        .bar-segment.accept {
+            background: #48bb78;
+        }
+
+        .bar-segment.reject {
+            background: #e53e3e;
+        }
+
+        .bar-segment.pending {
+            background: #cbd5e0;
+        }
+
+        .item-status {
+            margin-top: 12px;
+            font-size: 12px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .item-status.responsive {
+            color: #276749;
+        }
+
+        .item-status.non-responsive {
+            color: #c53030;
+        }
+
+        .item-status.pending {
+            color: #718096;
+        }
+
+        .item-price {
+            font-size: 12px;
+            color: #2b6cb0;
+            margin-top: 4px;
+        }
+
+        /* Requirement Detail */
+        .requirement-table {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            overflow: hidden;
+        }
+
+        .table-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .table-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .filter-group {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            border: 1px solid #e2e8f0;
+            background: white;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #ebf8ff;
+            border-color: #3182ce;
+            color: #2b6cb0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        table th {
+            text-align: left;
+            padding: 12px 16px;
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #718096;
+            background: #f7fafc;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        table td {
+            padding: 14px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid #f0f0f0;
+            vertical-align: top;
+        }
+
+        table tr:hover {
+            background: #f7fafc;
+        }
+
+        .req-priority {
+            display: inline-block;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-size: 10px;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+
+        .req-priority.c {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .req-priority.nc {
+            background: #a0aec0;
+            color: white;
+        }
+
+        .req-text {
+            color: #2d3748;
+        }
+
+        .offered-value {
+            color: #4a5568;
+        }
+
+        .decision-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .decision-badge.accept {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .decision-badge.reject {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .decision-badge.pending {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .clarification-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            font-size: 11px;
+            color: #ed8936;
+            margin-left: 8px;
+        }
+
+        .evidence-link {
+            font-size: 12px;
+            color: #3182ce;
+            cursor: pointer;
+        }
+
+        /* Documents Tab */
+        .documents-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+        }
+
+        .document-card {
+            background: white;
+            border-radius: 12px;
+            padding: 16px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .document-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .doc-icon {
+            width: 48px;
+            height: 48px;
+            background: #ebf8ff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-bottom: 12px;
+        }
+
+        .doc-icon.pdf {
+            background: #fed7d7;
+        }
+
+        .doc-icon.img {
+            background: #faf5ff;
+        }
+
+        .doc-title {
+            font-size: 13px;
+            font-weight: 500;
+            color: #2d3748;
+            margin-bottom: 4px;
+        }
+
+        .doc-meta {
+            font-size: 11px;
+            color: #718096;
+        }
+
+        .doc-ai-badge {
+            margin-top: 8px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            padding: 3px 8px;
+            background: #faf5ff;
+            color: #6b46c1;
+            border-radius: 10px;
+            font-size: 10px;
+        }
+
+        /* Clarifications Tab */
+        .clarification-list {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+        .clarification-item {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 16px;
+        }
+
+        .clarification-item:last-child {
+            border-bottom: none;
+        }
+
+        .clarification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .clarification-icon.active {
+            background: #fefcbf;
+        }
+
+        .clarification-icon.satisfied {
+            background: #c6f6d5;
+        }
+
+        .clarification-icon.not-satisfied {
+            background: #fed7d7;
+        }
+
+        .clarification-content {
+            flex: 1;
+        }
+
+        .clarification-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .clarification-cell {
+            font-size: 13px;
+            font-weight: 500;
+            color: #2d3748;
+        }
+
+        .clarification-status {
+            font-size: 11px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .clarification-status.active {
+            background: #fefcbf;
+            color: #975a16;
+        }
+
+        .clarification-status.satisfied {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .clarification-status.not-satisfied {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .clarification-preview {
+            font-size: 13px;
+            color: #4a5568;
+            margin-bottom: 8px;
+        }
+
+        .clarification-meta {
+            font-size: 11px;
+            color: #a0aec0;
+            display: flex;
+            gap: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div class="header-breadcrumb">
+            <a href="#">Dashboard</a> / <a href="#">PR 211-1</a> / <a href="#">Bidders</a> / Delmege Forsyth & Co. Ltd.
+        </div>
+        <div class="header-content">
+            <div class="header-left">
+                <div class="bidder-logo">DF</div>
+                <div class="header-title">
+                    <h1>Delmege Forsyth & Co. Ltd.</h1>
+                    <div class="header-subtitle">
+                        <span>Registration: PV 12345</span>
+                        <span>•</span>
+                        <span>Since 1854</span>
+                        <span class="status-badge responsive">Responsive (1 of 5 items)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="header-actions">
+                <button class="btn btn-light">📄 View Quotation</button>
+                <button class="btn btn-light">📊 Compare</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Company Info -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Company Information</h3>
+                    <span class="action">Edit</span>
+                </div>
+                <div class="card-body">
+                    <div class="info-row">
+                        <span class="info-label">Registration</span>
+                        <span class="info-value">PV 12345</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Tax ID</span>
+                        <span class="info-value">123456789-1234</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Address</span>
+                        <span class="info-value">No. 101, Galle Road, Colombo 03</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Contact</span>
+                        <span class="info-value">Mr. Kapila Silva</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Email</span>
+                        <span class="info-value">tenders@delmege.lk</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Phone</span>
+                        <span class="info-value">+94 11 234 5678</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bid Summary -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Bid Summary</h3>
+                </div>
+                <div class="card-body">
+                    <div class="bid-stat">
+                        <span class="label">Items Quoted</span>
+                        <span class="value">1 of 5</span>
+                    </div>
+                    <div class="bid-stat">
+                        <span class="label">Total Bid Price</span>
+                        <span class="value price">LKR 5,000,000</span>
+                    </div>
+                    <div class="bid-stat">
+                        <span class="label">With VAT (18%)</span>
+                        <span class="value price">LKR 5,900,000</span>
+                    </div>
+                    <div class="bid-stat">
+                        <span class="label">Bid Validity</span>
+                        <span class="value">90 days</span>
+                    </div>
+                    <div class="bid-stat">
+                        <span class="label">Submission</span>
+                        <span class="value">26 Nov 2025, 10:15 AM</span>
+                    </div>
+
+                    <div class="security-card">
+                        <div class="security-header">
+                            <span class="label">Bid Security</span>
+                            <span class="security-status">Valid</span>
+                        </div>
+                        <div class="security-details">
+                            <div><strong>Amount:</strong> LKR 250,000</div>
+                            <div><strong>Bank:</strong> Commercial Bank</div>
+                            <div><strong>Guarantee #:</strong> BG-2025-12345</div>
+                            <div><strong>Valid Until:</strong> 26 Feb 2026</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Document Checklist -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Document Checklist</h3>
+                    <span class="action">8/9</span>
+                </div>
+                <div class="card-body">
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Quotation Form</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Price Schedule</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Technical Compliance</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Company Registration</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Tax Clearance</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">VAT Registration</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">Bid Security</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <span class="doc-name">CE-IVD Certificate</span>
+                        <span class="doc-action">View</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check missing">!</span>
+                        <span class="doc-name missing">NMRA Registration</span>
+                        <span class="doc-action">Request</span>
+                    </div>
+                    <div class="doc-item">
+                        <span class="doc-check submitted">✓</span>
+                        <div style="flex:1;">
+                            <div class="doc-name">Non-Collusion Affidavit</div>
+                            <div style="font-size:11px; color:#718096; margin-top:2px;">Authenticated — Sworn before JP/Commissioner of Oaths <input type="checkbox" checked style="margin-left:6px; vertical-align:middle;"></div>
+                        </div>
+                        <span class="doc-action">View</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bidder History -->
+            <div class="card">
+                <div class="card-header">
+                    <h3>Participation History</h3>
+                    <span class="action">View All</span>
+                </div>
+                <div class="card-body">
+                    <div class="history-item">
+                        <div class="history-tender">PR 208-1: Office Supplies</div>
+                        <div class="history-meta">
+                            <span>Sep 2025</span>
+                            <span>3 items</span>
+                            <span class="history-result awarded">Awarded</span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-tender">PR 195-2: IT Equipment</div>
+                        <div class="history-meta">
+                            <span>Jun 2025</span>
+                            <span>5 items</span>
+                            <span class="history-result not-awarded">Not Awarded</span>
+                        </div>
+                    </div>
+                    <div class="history-item">
+                        <div class="history-tender">PR 182-1: Lab Consumables</div>
+                        <div class="history-meta">
+                            <span>Mar 2025</span>
+                            <span>8 items</span>
+                            <span class="history-result awarded">Awarded</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Tabs -->
+            <div class="tabs">
+                <div class="tab active">
+                    📊 Compliance Overview
+                </div>
+                <div class="tab">
+                    📋 Requirements <span class="badge">28</span>
+                </div>
+                <div class="tab">
+                    📄 Documents <span class="badge">12</span>
+                </div>
+                <div class="tab">
+                    💬 Clarifications <span class="badge">0</span>
+                </div>
+                <div class="tab">
+                    🚫 Debarment
+                </div>
+            </div>
+
+            <!-- Compliance Overview -->
+            <div class="compliance-grid">
+                <!-- Item 1 - Responsive -->
+                <div class="compliance-card responsive active">
+                    <div class="item-number">Item 1</div>
+                    <div class="item-name">Refrigerated Microcentrifuge</div>
+                    <div class="compliance-stats">
+                        <div class="stat-item">
+                            <div class="stat-value accept">19</div>
+                            <div class="stat-label">Accept</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value reject">0</div>
+                            <div class="stat-label">Reject</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value pending">9</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                    <div class="compliance-bar">
+                        <div class="bar-segment accept" style="width: 68%"></div>
+                        <div class="bar-segment pending" style="width: 32%"></div>
+                    </div>
+                    <div class="item-status responsive">✓ Responsive (so far)</div>
+                    <div class="item-price">LKR 5,000,000</div>
+                </div>
+
+                <!-- Item 2 - Not Quoted -->
+                <div class="compliance-card" style="opacity: 0.5;">
+                    <div class="item-number">Item 2</div>
+                    <div class="item-name">Forced Air-Drying Oven</div>
+                    <div style="padding: 20px 0; text-align: center; color: #a0aec0;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">—</div>
+                        <div style="font-size: 12px;">Not Quoted</div>
+                    </div>
+                </div>
+
+                <!-- Item 3 - Not Quoted -->
+                <div class="compliance-card" style="opacity: 0.5;">
+                    <div class="item-number">Item 3</div>
+                    <div class="item-name">High-precision Digital Thermometer</div>
+                    <div style="padding: 20px 0; text-align: center; color: #a0aec0;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">—</div>
+                        <div style="font-size: 12px;">Not Quoted</div>
+                    </div>
+                </div>
+
+                <!-- Item 4 - Not Quoted -->
+                <div class="compliance-card" style="opacity: 0.5;">
+                    <div class="item-number">Item 4</div>
+                    <div class="item-name">High-Speed Homogenizer</div>
+                    <div style="padding: 20px 0; text-align: center; color: #a0aec0;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">—</div>
+                        <div style="font-size: 12px;">Not Quoted</div>
+                    </div>
+                </div>
+
+                <!-- Item 5 - Not Quoted -->
+                <div class="compliance-card" style="opacity: 0.5;">
+                    <div class="item-number">Item 5</div>
+                    <div class="item-name">Gel Documentation System</div>
+                    <div style="padding: 20px 0; text-align: center; color: #a0aec0;">
+                        <div style="font-size: 24px; margin-bottom: 8px;">—</div>
+                        <div style="font-size: 12px;">Not Quoted</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Requirement Details -->
+            <div class="requirement-table">
+                <div class="table-header">
+                    <h3>Item 1: Refrigerated Microcentrifuge - Requirements</h3>
+                    <div class="filter-group">
+                        <button class="filter-btn active">All (28)</button>
+                        <button class="filter-btn">Compulsory (19)</button>
+                        <button class="filter-btn">Pending (9)</button>
+                        <button class="filter-btn">Rejected (0)</button>
+                    </div>
+                </div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th style="width: 35%;">Requirement</th>
+                            <th style="width: 25%;">Offered Value</th>
+                            <th style="width: 15%;">Decision</th>
+                            <th style="width: 25%;">Evidence</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Make (Please specify)</span>
+                            </td>
+                            <td class="offered-value">Thermo Scientific</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Quotation p.1</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Model and Model Year</span>
+                            </td>
+                            <td class="offered-value">Multifuge X1R Pro / 2021 (2025 manufacture)</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Quotation p.1</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Maximum Speed ≥ 15,000 rpm</span>
+                            </td>
+                            <td class="offered-value">15,200 rpm with Microliter 30×2</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Spec Sheet p.3</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Maximum RCF ≥ 20,000 × g</span>
+                            </td>
+                            <td class="offered-value">25,830 × g</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Spec Sheet p.3</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">CE-IVD or NMRA Certification</span>
+                            </td>
+                            <td class="offered-value">CE-IVD + NMRA provided</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Certificate p.1-2</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Temperature Range: -10°C to +20°C</span>
+                            </td>
+                            <td class="offered-value">-10°C to +40°C</td>
+                            <td>
+                                <span class="decision-badge pending">○ Pending</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Reviewing...</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority nc">NC</span>
+                                <span class="req-text">Memory Function: Min 6 programs</span>
+                            </td>
+                            <td class="offered-value">Up to 100 programs</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Spec Sheet p.5</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <span class="req-priority c">C</span>
+                                <span class="req-text">Warranty: Min 3 years</span>
+                            </td>
+                            <td class="offered-value">3 years comprehensive</td>
+                            <td>
+                                <span class="decision-badge accept">✓ Accept</span>
+                            </td>
+                            <td>
+                                <span class="evidence-link">Warranty Terms</span>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+            <!-- Debarment Status Section -->
+            <div style="background:white; border-radius:12px; padding:20px; margin-bottom:16px; border:1px solid #e0e0e0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div style="font-size:15px; font-weight:600; color:#333;">Debarment Status</div>
+                    <span style="padding:4px 12px; background:#f0fff4; color:#276749; border-radius:12px; font-size:12px; font-weight:500;">No Active Debarment</span>
+                </div>
+                <div style="font-size:13px; color:#666;">This bidder has no active debarment records. Debarment history (if any) would appear here.</div>
+                <div style="margin-top:12px; padding:10px; background:#f7fafc; border-radius:6px; font-size:12px; color:#4a5568;">
+                    <strong>Debarment levels:</strong> PE-level | Ministry-level | National-level<br>
+                    If Active: system will warn when this bidder is added to a new tender (soft block — PE decides, but warning is mandatory).
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Filter buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+            });
+        });
+
+        // Compliance card selection
+        document.querySelectorAll('.compliance-card').forEach(card => {
+            card.addEventListener('click', () => {
+                document.querySelectorAll('.compliance-card').forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Clarification Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f5f7fa;
+            color: #333;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header */
+        .header {
+            background: #1a365d;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-breadcrumb {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        .header-breadcrumb a {
+            color: white;
+            text-decoration: none;
+        }
+
+        .header-breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-light {
+            background: rgba(255,255,255,0.2);
+            color: white;
+        }
+
+        .btn-primary {
+            background: #3182ce;
+            color: white;
+        }
+
+        .btn-success {
+            background: #48bb78;
+            color: white;
+        }
+
+        .btn-warning {
+            background: #ed8936;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #edf2f7;
+            color: #4a5568;
+            border: 1px solid #cbd5e0;
+        }
+
+        /* Main Layout */
+        .main-layout {
+            display: flex;
+            flex: 1;
+            overflow: hidden;
+        }
+
+        /* Thread List Panel */
+        .thread-list-panel {
+            width: 380px;
+            background: white;
+            border-right: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .panel-header h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 12px;
+        }
+
+        .filter-tabs {
+            display: flex;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+
+        .filter-tab {
+            padding: 5px 10px;
+            font-size: 11px;
+            border-radius: 12px;
+            cursor: pointer;
+            background: #edf2f7;
+            color: #4a5568;
+        }
+
+        .filter-tab.active {
+            background: #3182ce;
+            color: white;
+        }
+
+        .filter-tab .count {
+            background: rgba(0,0,0,0.1);
+            padding: 1px 6px;
+            border-radius: 8px;
+            margin-left: 4px;
+        }
+
+        .filter-tab.active .count {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .thread-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .thread-item {
+            padding: 14px 16px;
+            border-bottom: 1px solid #e2e8f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .thread-item:hover {
+            background: #f7fafc;
+        }
+
+        .thread-item.active {
+            background: #ebf8ff;
+            border-left: 3px solid #3182ce;
+        }
+
+        .thread-item.unread {
+            background: #fffbeb;
+        }
+
+        .thread-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 6px;
+        }
+
+        .thread-type {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .type-badge {
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 10px;
+            font-weight: 500;
+        }
+
+        .type-badge.bidder {
+            background: #ebf8ff;
+            color: #2b6cb0;
+        }
+
+        .type-badge.requestor {
+            background: #faf5ff;
+            color: #6b46c1;
+        }
+        .type-badge.internal {
+            background: #faf5ff;
+            color: #6b46c1;
+        }
+
+        .level-badge {
+            font-size: 10px;
+            color: #718096;
+        }
+
+        .thread-status {
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .thread-status.active {
+            background: #fefcbf;
+            color: #975a16;
+        }
+
+        .thread-status.closed-satisfied {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .thread-status.closed-not-satisfied {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .thread-status.pending-approval {
+            background: #e9d8fd;
+            color: #553c9a;
+        }
+
+        .thread-status.awaiting-response {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .thread-cell-ref {
+            font-size: 12px;
+            color: #4a5568;
+            margin-bottom: 4px;
+        }
+
+        .thread-cell-ref strong {
+            color: #2d3748;
+        }
+
+        .thread-recipient {
+            font-size: 13px;
+            font-weight: 500;
+            margin-bottom: 4px;
+        }
+
+        .thread-preview {
+            font-size: 12px;
+            color: #718096;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .thread-meta {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 8px;
+            font-size: 11px;
+            color: #a0aec0;
+        }
+
+        .thread-meta .messages {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Thread Detail Panel */
+        .thread-detail-panel {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            background: #f7fafc;
+        }
+
+        .detail-header {
+            background: white;
+            padding: 16px 20px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .detail-header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 12px;
+        }
+
+        .detail-title {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .detail-subtitle {
+            font-size: 12px;
+            color: #718096;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .cell-reference {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #edf2f7;
+            border-radius: 8px;
+            font-size: 13px;
+        }
+
+        .cell-reference .label {
+            color: #718096;
+            font-size: 11px;
+        }
+
+        .cell-reference .value {
+            font-weight: 500;
+        }
+
+        .cell-reference .link {
+            color: #3182ce;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        /* Message Thread */
+        .message-thread {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .message {
+            margin-bottom: 16px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message.outgoing {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .message.outgoing .message-avatar {
+            background: #3182ce;
+            color: white;
+        }
+
+        .message.incoming .message-avatar {
+            background: #48bb78;
+            color: white;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message-bubble {
+            padding: 12px 16px;
+            border-radius: 12px;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .message.outgoing .message-bubble {
+            background: #3182ce;
+            color: white;
+            border-bottom-right-radius: 4px;
+        }
+
+        .message.incoming .message-bubble {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-bottom-left-radius: 4px;
+        }
+
+        .message-meta {
+            display: flex;
+            gap: 12px;
+            margin-top: 6px;
+            font-size: 11px;
+            color: #a0aec0;
+        }
+
+        .message.outgoing .message-meta {
+            justify-content: flex-end;
+        }
+
+        .message-attachment {
+            margin-top: 8px;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 12px;
+        }
+
+        .message.incoming .message-attachment {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+        }
+
+        .approval-status {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            margin-top: 8px;
+        }
+
+        .approval-status.approved {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .approval-status.pending {
+            background: #fefcbf;
+            color: #975a16;
+        }
+
+        .approval-status.sent {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        /* Divider */
+        .thread-divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 20px 0;
+            color: #a0aec0;
+            font-size: 11px;
+        }
+
+        .thread-divider::before,
+        .thread-divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #e2e8f0;
+        }
+
+        /* Compose Area */
+        .compose-area {
+            background: white;
+            border-top: 1px solid #e2e8f0;
+            padding: 16px 20px;
+        }
+
+        .compose-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+        }
+
+        .compose-header h4 {
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .template-selector {
+            padding: 6px 12px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 12px;
+            background: white;
+        }
+
+        .compose-textarea {
+            width: 100%;
+            height: 100px;
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 13px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .compose-textarea:focus {
+            outline: none;
+            border-color: #3182ce;
+        }
+
+        .compose-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+        }
+
+        .compose-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .attach-btn {
+            padding: 6px 12px;
+            background: #edf2f7;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        /* Close Thread Modal */
+        .close-thread-section {
+            background: #fffbeb;
+            border: 1px solid #fbd38d;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+        }
+
+        .close-thread-section h4 {
+            font-size: 13px;
+            font-weight: 600;
+            margin-bottom: 8px;
+            color: #975a16;
+        }
+
+        .close-options {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .close-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .close-option:hover {
+            border-color: #cbd5e0;
+        }
+
+        .close-option.selected.satisfied {
+            border-color: #48bb78;
+            background: #f0fff4;
+        }
+
+        .close-option.selected.not-satisfied {
+            border-color: #e53e3e;
+            background: #fff5f5;
+        }
+
+        .close-option .icon {
+            font-size: 24px;
+            margin-bottom: 4px;
+        }
+
+        .close-option .label {
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        .close-notes {
+            width: 100%;
+            padding: 8px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 12px;
+        }
+
+        /* Empty State */
+        .empty-state {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #a0aec0;
+        }
+
+        .empty-state .icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .empty-state .text {
+            font-size: 14px;
+        }
+
+        /* New Thread Panel */
+        .new-thread-panel {
+            width: 400px;
+            background: white;
+            border-left: 1px solid #e2e8f0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .new-thread-panel.hidden {
+            display: none;
+        }
+
+        .new-thread-header {
+            padding: 16px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .new-thread-header h3 {
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .new-thread-body {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 16px;
+        }
+
+        .form-group label {
+            display: block;
+            font-size: 12px;
+            font-weight: 500;
+            color: #4a5568;
+            margin-bottom: 6px;
+        }
+
+        .form-group select,
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .form-group textarea {
+            height: 120px;
+            resize: none;
+            font-family: inherit;
+        }
+
+        .type-selector {
+            display: flex;
+            gap: 8px;
+        }
+
+        .type-option {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.2s;
+        }
+
+        .type-option:hover {
+            border-color: #cbd5e0;
+        }
+
+        .type-option.selected {
+            border-color: #3182ce;
+            background: #ebf8ff;
+        }
+
+        .type-option .icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+
+        .type-option .label {
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .type-option .desc {
+            font-size: 10px;
+            color: #718096;
+        }
+
+        .template-preview {
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            padding: 12px;
+            font-size: 12px;
+            color: #4a5568;
+            margin-top: 8px;
+        }
+
+        .template-preview .placeholder {
+            background: #fefcbf;
+            padding: 0 4px;
+            border-radius: 2px;
+        }
+
+        .new-thread-footer {
+            padding: 16px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .new-thread-panel {
+                position: fixed;
+                right: 0;
+                top: 0;
+                bottom: 0;
+                z-index: 100;
+                box-shadow: -4px 0 12px rgba(0,0,0,0.1);
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <div class="header">
+        <div>
+            <div class="header-breadcrumb">
+                <a href="#">Dashboard</a> / <a href="#">PR 211-1</a> / Clarifications
+            </div>
+            <h1>Clarification Management</h1>
+        </div>
+        <button class="btn btn-light" onclick="toggleNewThread()">+ New Clarification</button>
+    </div>
+
+    <!-- Main Layout -->
+    <div class="main-layout">
+        <!-- Thread List Panel -->
+        <div class="thread-list-panel">
+            <div class="panel-header">
+                <h2>Clarification Threads</h2>
+                <div class="filter-tabs">
+                    <div class="filter-tab active">All <span class="count">8</span></div>
+                    <div class="filter-tab">Bidder <span class="count">6</span></div>
+                    <div class="filter-tab">Internal Technical Consultation (Advisory) <span class="count">2</span></div>
+                    <div class="filter-tab">Active <span class="count">3</span></div>
+                    <div class="filter-tab">Closed <span class="count">3</span></div>
+                </div>
+            </div>
+            <div class="thread-list">
+                <!-- Thread 1 - Active with response -->
+                <div class="thread-item active">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge bidder">Bidder</span>
+                            <span class="level-badge">Requirement</span>
+                        </div>
+                        <span class="thread-status active">Active</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 1:</strong> Refrigerated Microcentrifuge → Warranty
+                    </div>
+                    <div class="thread-recipient">Bhoomi Tech Pvt Ltd</div>
+                    <div class="thread-preview">Response: We can extend warranty to 3 years at +5%...</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 4 messages</span>
+                        <span>Updated 2h ago</span>
+                    </div>
+                </div>
+
+                <!-- Thread 2 - Awaiting Response -->
+                <div class="thread-item unread">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge bidder">Bidder</span>
+                            <span class="level-badge">Requirement</span>
+                        </div>
+                        <span class="thread-status awaiting-response">Awaiting Response</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 1:</strong> Refrigerated Microcentrifuge → CE-IVD Cert
+                    </div>
+                    <div class="thread-recipient">P&T Trading Pvt Ltd</div>
+                    <div class="thread-preview">Please re-attach CE-IVD, NMRA certificate...</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 1 message</span>
+                        <span>Sent 3 days ago</span>
+                    </div>
+                </div>
+
+                <!-- Thread 3 - Pending Approval -->
+                <div class="thread-item">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge requestor">Internal Technical Consultation</span>
+                            <span class="level-badge">Requirement</span>
+                        </div>
+                        <span class="thread-status pending-approval">Pending Approval</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 1:</strong> Refrigerated Microcentrifuge → Max Speed
+                    </div>
+                    <div class="thread-recipient">Dr. Peshala (Equipment Requestor)</div>
+                    <div class="thread-preview">Bidder offers 14,800 rpm vs required 15,000 rpm...</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 Draft</span>
+                        <span>Awaiting Chair approval</span>
+                    </div>
+                </div>
+
+                <!-- Thread 4 - Closed Satisfied -->
+                <div class="thread-item">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge bidder">Bidder</span>
+                            <span class="level-badge">Item</span>
+                        </div>
+                        <span class="thread-status closed-satisfied">Satisfied</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 5:</strong> Gel Documentation System (Item-level)
+                    </div>
+                    <div class="thread-recipient">Avon Pharmo Chem Pvt Ltd</div>
+                    <div class="thread-preview">Confirmed: 5 years spare parts, 2 year warranty</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 3 messages</span>
+                        <span>Closed 1 day ago</span>
+                    </div>
+                </div>
+
+                <!-- Thread 5 - Closed Not Satisfied -->
+                <div class="thread-item">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge bidder">Bidder</span>
+                            <span class="level-badge">Requirement</span>
+                        </div>
+                        <span class="thread-status closed-not-satisfied">Not Satisfied</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 2:</strong> Forced Air-Drying Oven → Capacity
+                    </div>
+                    <div class="thread-recipient">Research Instruments Pvt Ltd</div>
+                    <div class="thread-preview">Could not provide 250L capacity as required</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 2 messages</span>
+                        <span>Closed 2 days ago</span>
+                    </div>
+                </div>
+
+                <!-- Thread 6 -->
+                <div class="thread-item">
+                    <div class="thread-header">
+                        <div class="thread-type">
+                            <span class="type-badge requestor">Internal Technical Consultation</span>
+                            <span class="level-badge">Requirement</span>
+                        </div>
+                        <span class="thread-status closed-satisfied">Satisfied</span>
+                    </div>
+                    <div class="thread-cell-ref">
+                        <strong>Item 4:</strong> High-Speed Homogenizer → Air Cooling
+                    </div>
+                    <div class="thread-recipient">Dr. Dananjaya (Equipment Requestor)</div>
+                    <div class="thread-preview">Deviation acceptable for intended use case</div>
+                    <div class="thread-meta">
+                        <span class="messages">💬 2 messages</span>
+                        <span>Closed 3 days ago</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Thread Detail Panel -->
+        <div class="thread-detail-panel">
+            <div class="detail-header">
+                <div class="detail-header-top">
+                    <div>
+                        <div class="detail-title">Warranty Extension Clarification</div>
+                        <div class="detail-subtitle">
+                            <span class="type-badge bidder">Bidder Clarification</span>
+                            to Bhoomi Tech Pvt Ltd
+                        </div>
+                    </div>
+                    <div class="detail-actions">
+                        <button class="btn btn-secondary" onclick="showCloseOptions()">Close Thread</button>
+                    </div>
+                </div>
+                <div class="cell-reference">
+                    <div>
+                        <div class="label">Linked to Evaluation Cell</div>
+                        <div class="value">Item 1: Refrigerated Microcentrifuge → Warranty: Min 3 years</div>
+                    </div>
+                    <span class="link">→ View in Grid</span>
+                </div>
+            </div>
+
+            <!-- Close Thread Section (Initially Hidden) -->
+            <div class="close-thread-section" id="closeSection" style="display:none; margin: 16px 20px;">
+                <h4>Close this clarification thread</h4>
+                <div class="close-options">
+                    <div class="close-option" onclick="selectCloseOption(this, 'satisfied')">
+                        <div class="icon">✅</div>
+                        <div class="label">Satisfied</div>
+                    </div>
+                    <div class="close-option" onclick="selectCloseOption(this, 'not-satisfied')">
+                        <div class="icon">❌</div>
+                        <div class="label">Not Satisfied</div>
+                    </div>
+                </div>
+                <input type="text" class="close-notes" placeholder="Closure notes (optional)...">
+                <div style="display:flex; gap:8px; justify-content: flex-end;">
+                    <button class="btn btn-secondary" onclick="hideCloseOptions()">Cancel</button>
+                    <button class="btn btn-primary">Confirm & Close Thread</button>
+                </div>
+            </div>
+
+            <!-- Message Thread -->
+            <div class="message-thread">
+                <!-- Message 1 - Outgoing -->
+                <div class="message outgoing">
+                    <div class="message-avatar">BEC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Dear Bhoomi Tech Pvt Ltd,<br><br>
+                            With reference to your quotation for the Refrigerated Microcentrifuge (Item 1), we note that you have offered a warranty period of 2 years.<br><br>
+                            The tender requirement specifies a minimum warranty of 3 years, with at least 2 years from the manufacturer.<br><br>
+                            Please confirm whether you can extend the warranty period to meet this requirement and provide any associated costs.
+                        </div>
+                        <div class="approval-status approved">✓ Approved by Chair</div>
+                        <div class="message-meta">
+                            <span>Drafted by: Mr. Nuwan (Secretary)</span>
+                            <span>Sent: 20 Dec 2025, 10:30 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="thread-divider">Sent to bidder via Procurement</div>
+
+                <!-- Message 2 - Incoming -->
+                <div class="message incoming">
+                    <div class="message-avatar">BT</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Dear BEC,<br><br>
+                            Thank you for your clarification request.<br><br>
+                            We confirm that we can extend the warranty period to 3 years. The additional cost for the third year warranty extension would be 5% of the quoted unit price.<br><br>
+                            Please find attached our revised warranty terms document.
+                        </div>
+                        <div class="message-attachment">
+                            📎 Revised_Warranty_Terms.pdf (245 KB)
+                        </div>
+                        <div class="message-meta">
+                            <span>Received: 22 Dec 2025, 2:15 PM</span>
+                            <span>Entered by: Mrs. Tharangika (Procurement)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Message 3 - Outgoing follow-up -->
+                <div class="message outgoing">
+                    <div class="message-avatar">BEC</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Thank you for your response.<br><br>
+                            Please clarify whether the 3-year warranty includes on-site support, or if separate charges apply for service visits.
+                        </div>
+                        <div class="approval-status approved">✓ Approved by Chair</div>
+                        <div class="message-meta">
+                            <span>Drafted by: Mr. Nuwan (Secretary)</span>
+                            <span>Sent: 23 Dec 2025, 9:00 AM</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="thread-divider">Sent to bidder via Procurement</div>
+
+                <!-- Message 4 - Incoming -->
+                <div class="message incoming">
+                    <div class="message-avatar">BT</div>
+                    <div class="message-content">
+                        <div class="message-bubble">
+                            Dear BEC,<br><br>
+                            The 3-year extended warranty includes:<br>
+                            • Unlimited on-site service visits<br>
+                            • Parts replacement (excluding consumables)<br>
+                            • 24-hour response time for critical issues<br><br>
+                            No additional charges apply for service visits within the warranty period.
+                        </div>
+                        <div class="message-meta">
+                            <span>Received: 24 Dec 2025, 11:30 AM</span>
+                            <span>Entered by: Mrs. Tharangika (Procurement)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Compose Area -->
+            <div class="compose-area">
+                <div style="background:#fff5f5; border:1px solid #fc8181; border-radius:6px; padding:10px 12px; margin-bottom:12px; font-size:12px; color:#c53030;">
+                    <strong>Clarification Restriction:</strong> Clarifications must NOT request or result in any modification to: contract price, delivery period, conditions of contract, technical specifications, or any other substantive element of the bid. Violations will invalidate the clarification.
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; font-size:11px; color:#718096;">
+                    <span style="padding:3px 8px; background:#edf2f7; border-radius:10px;">Draft</span>
+                    <span style="color:#a0aec0;">→</span>
+                    <span style="padding:3px 8px; background:#e9d8fd; color:#553c9a; border-radius:10px;">Awaiting Chair Approval</span>
+                    <span style="color:#a0aec0;">→</span>
+                    <span style="padding:3px 8px; background:#c6f6d5; color:#276749; border-radius:10px;">Approved</span>
+                    <span style="color:#a0aec0;">→</span>
+                    <span style="padding:3px 8px; background:#bee3f8; color:#2c5282; border-radius:10px;">Sent</span>
+                    <span style="color:#a0aec0;">→</span>
+                    <span style="padding:3px 8px; background:#fefcbf; color:#975a16; border-radius:10px;">Response Received</span>
+                    <span style="color:#a0aec0;">→</span>
+                    <span style="padding:3px 8px; background:#e2e8f0; color:#4a5568; border-radius:10px;">Closed</span>
+                </div>
+                <div class="compose-header">
+                    <h4>Add Follow-up Message</h4>
+                    <select class="template-selector">
+                        <option>Select template...</option>
+                        <option>Request Additional Documents</option>
+                        <option>Request Price Confirmation</option>
+                        <option>Acknowledge Response</option>
+                    </select>
+                </div>
+                <textarea class="compose-textarea" placeholder="Type your follow-up message..."></textarea>
+                <div class="compose-footer">
+                    <div class="compose-actions">
+                        <button class="attach-btn">📎 Attach</button>
+                    </div>
+                    <div class="compose-actions">
+                        <button class="btn btn-secondary">Save Draft</button>
+                        <button class="btn btn-primary">Submit for Chair Approval</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- New Thread Panel -->
+        <div class="new-thread-panel hidden" id="newThreadPanel">
+            <div class="new-thread-header">
+                <h3>New Clarification</h3>
+                <button class="close-btn" onclick="toggleNewThread()">×</button>
+            </div>
+            <div class="new-thread-body">
+                <div class="form-group">
+                    <label>Clarification Type</label>
+                    <div class="type-selector">
+                        <div class="type-option selected" onclick="selectType(this)">
+                            <div class="icon">🏢</div>
+                            <div class="label">Bidder</div>
+                            <div class="desc">External supplier</div>
+                        </div>
+                        <div class="type-option" onclick="selectType(this)">
+                            <div class="icon">👤</div>
+                            <div class="label">Internal Technical Consultation</div>
+                            <div class="desc">Advisory only — BEC decides</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Clarification Level</label>
+                    <select>
+                        <option>Requirement-level (linked to specific cell)</option>
+                        <option>Item-level (general query for item)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Linked Cell</label>
+                    <select>
+                        <option>Item 1: Microcentrifuge → CE-IVD Certification (P&T Trading)</option>
+                        <option>Item 1: Microcentrifuge → CE-IVD Certification (Hemsons)</option>
+                        <option>Item 1: Microcentrifuge → CE-IVD Certification (Premium)</option>
+                        <option>Item 2: Drying Oven → Capacity (Research Instruments)</option>
+                        <option>Item 5: Gel Doc → Medical Proof (Analytical)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label>Template</label>
+                    <select onchange="showTemplate()">
+                        <option value="">Select a template...</option>
+                        <option value="cert">Request Missing Certification</option>
+                        <option value="spec">Clarify Specification</option>
+                        <option value="warranty">Warranty Clarification</option>
+                        <option value="custom">Custom Message</option>
+                    </select>
+                    <div class="template-preview" id="templatePreview" style="display:none;">
+                        Dear <span class="placeholder">[Bidder Name]</span>,<br><br>
+                        With reference to your quotation for <span class="placeholder">[Item Name]</span>, we require clarification regarding <span class="placeholder">[Requirement]</span>.<br><br>
+                        Please provide <span class="placeholder">[specific request]</span> within 5 business days.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Message</label>
+                    <textarea placeholder="Draft your clarification message..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Attachments</label>
+                    <button class="attach-btn" style="width:100%; justify-content:center;">📎 Add Attachments</button>
+                </div>
+            </div>
+            <div class="new-thread-footer">
+                <button class="btn btn-secondary" onclick="toggleNewThread()">Cancel</button>
+                <button class="btn btn-primary">Submit for Approval</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleNewThread() {
+            document.getElementById('newThreadPanel').classList.toggle('hidden');
+        }
+
+        function selectType(el) {
+            document.querySelectorAll('.type-option').forEach(o => o.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function showTemplate() {
+            const preview = document.getElementById('templatePreview');
+            preview.style.display = event.target.value ? 'block' : 'none';
+        }
+
+        function showCloseOptions() {
+            document.getElementById('closeSection').style.display = 'block';
+        }
+
+        function hideCloseOptions() {
+            document.getElementById('closeSection').style.display = 'none';
+        }
+
+        function selectCloseOption(el, type) {
+            document.querySelectorAll('.close-option').forEach(o => {
+                o.classList.remove('selected', 'satisfied', 'not-satisfied');
+            });
+            el.classList.add('selected', type);
+        }
+
+        // Filter tabs
+        document.querySelectorAll('.filter-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+            });
+        });
+
+        // Thread selection
+        document.querySelectorAll('.thread-item').forEach(item => {
+            item.addEventListener('click', () => {
+                document.querySelectorAll('.thread-item').forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>

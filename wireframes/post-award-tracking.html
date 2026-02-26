@@ -1,0 +1,1041 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Post-Award Tracking</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .back-btn {
+            background: transparent;
+            border: none;
+            color: white;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .tender-ref {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        /* Summary Bar */
+        .summary-bar {
+            background: white;
+            padding: 16px 24px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            gap: 40px;
+        }
+
+        .summary-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .summary-label {
+            font-size: 11px;
+            color: #666;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .summary-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .summary-value.success { color: #2e7d32; }
+        .summary-value.warning { color: #f57c00; }
+        .summary-value.danger { color: #c62828; }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 120px);
+        }
+
+        /* Left Sidebar - Suppliers */
+        .supplier-sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .supplier-list {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .supplier-item {
+            padding: 16px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+        }
+
+        .supplier-item:hover {
+            background: #f9f9f9;
+        }
+
+        .supplier-item.active {
+            background: #e3f2fd;
+            border-left: 3px solid #1a237e;
+        }
+
+        .supplier-name {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .supplier-items {
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+
+        .supplier-progress {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .progress-bar {
+            flex: 1;
+            height: 6px;
+            background: #e0e0e0;
+            border-radius: 3px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+        }
+
+        .progress-fill.delivered { background: #4caf50; }
+        .progress-fill.partial { background: #ff9800; }
+
+        .progress-text {
+            font-size: 11px;
+            color: #666;
+            min-width: 60px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+        }
+
+        .supplier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 24px;
+        }
+
+        .supplier-info h2 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .supplier-meta {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .contract-badge {
+            padding: 8px 16px;
+            background: #e8f5e9;
+            border-radius: 8px;
+            text-align: right;
+        }
+
+        .contract-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .contract-value {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2e7d32;
+        }
+
+        /* Performance Security */
+        .security-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .security-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .security-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .security-status {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .security-status.active {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .security-status.expiring {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .security-details {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+        }
+
+        .security-detail {
+            text-align: center;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .detail-value {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-label {
+            font-size: 11px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        /* Items Tracking */
+        .items-section {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .items-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .items-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .items-filter {
+            display: flex;
+            gap: 8px;
+        }
+
+        .filter-btn {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .filter-btn.active {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        .item-row {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .item-row:last-child {
+            border-bottom: none;
+        }
+
+        .item-header {
+            padding: 16px 20px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            cursor: pointer;
+        }
+
+        .item-header:hover {
+            background: #f9f9f9;
+        }
+
+        .item-expand {
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #666;
+        }
+
+        .item-info {
+            flex: 1;
+        }
+
+        .item-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .item-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .item-qty {
+            text-align: center;
+            min-width: 80px;
+        }
+
+        .qty-value {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .qty-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .item-milestones {
+            display: flex;
+            gap: 4px;
+        }
+
+        .milestone-dot {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            position: relative;
+        }
+
+        .milestone-dot.complete {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .milestone-dot.current {
+            background: #fff3e0;
+            color: #f57c00;
+            border: 2px solid #f57c00;
+        }
+
+        .milestone-dot.pending {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .milestone-dot::after {
+            content: "";
+            position: absolute;
+            right: -6px;
+            width: 4px;
+            height: 2px;
+            background: #e0e0e0;
+        }
+
+        .milestone-dot:last-child::after {
+            display: none;
+        }
+
+        .item-status {
+            min-width: 100px;
+            text-align: right;
+        }
+
+        .status-tag {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-tag.delivered {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-tag.in-transit {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .status-tag.installing {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .status-tag.pending {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        /* Expanded Item Detail */
+        .item-detail {
+            padding: 0 20px 20px 60px;
+            background: #fafafa;
+        }
+
+        .milestone-timeline {
+            display: flex;
+            gap: 0;
+            margin-bottom: 16px;
+        }
+
+        .timeline-step {
+            flex: 1;
+            position: relative;
+        }
+
+        .timeline-step::before {
+            content: "";
+            position: absolute;
+            top: 14px;
+            left: 30px;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-step:last-child::before {
+            display: none;
+        }
+
+        .timeline-step.complete::before {
+            background: #4caf50;
+        }
+
+        .step-icon {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .step-icon.complete {
+            background: #4caf50;
+            color: white;
+        }
+
+        .step-icon.current {
+            background: #ff9800;
+            color: white;
+        }
+
+        .step-icon.pending {
+            background: #e0e0e0;
+            color: #999;
+        }
+
+        .step-content {
+            margin-top: 8px;
+        }
+
+        .step-name {
+            font-size: 12px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .step-date {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .step-note {
+            font-size: 11px;
+            color: #999;
+            font-style: italic;
+        }
+
+        .detail-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .action-btn {
+            padding: 8px 16px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .action-btn:hover {
+            background: #f5f5f5;
+        }
+
+        .action-btn.primary {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        /* Right Panel - Activity */
+        .activity-panel {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .activity-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .activity-item {
+            display: flex;
+            gap: 12px;
+            padding-bottom: 16px;
+            margin-bottom: 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .activity-icon {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .activity-icon.delivery {
+            background: #e3f2fd;
+            color: #1565c0;
+        }
+
+        .activity-icon.install {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .activity-icon.complete {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .activity-icon.note {
+            background: #f5f5f5;
+            color: #666;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-size: 13px;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .activity-text strong {
+            font-weight: 600;
+        }
+
+        .activity-time {
+            font-size: 11px;
+            color: #999;
+            margin-top: 4px;
+        }
+
+        /* Upcoming Section */
+        .upcoming-section {
+            padding: 16px;
+            background: #fff8e1;
+            border-top: 1px solid #ffe082;
+        }
+
+        .upcoming-title {
+            font-size: 12px;
+            font-weight: 600;
+            color: #f57c00;
+            margin-bottom: 12px;
+        }
+
+        .upcoming-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .upcoming-name {
+            color: #333;
+        }
+
+        .upcoming-date {
+            color: #f57c00;
+            font-weight: 500;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <button class="back-btn">&lt;</button>
+            <h1>Post-Award Tracking</h1>
+            <span class="tender-ref">PR 211-1</span>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline">Export Report</button>
+            <button class="btn btn-primary">Record Update</button>
+        </div>
+    </div>
+
+    <div class="summary-bar">
+        <div class="summary-item">
+            <span class="summary-label">Total Contract Value</span>
+            <span class="summary-value">LKR 8,456,200</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Awarded Suppliers</span>
+            <span class="summary-value">3</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Items Delivered</span>
+            <span class="summary-value success">3 / 5</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Fully Commissioned</span>
+            <span class="summary-value success">2 / 5</span>
+        </div>
+        <div class="summary-item">
+            <span class="summary-label">Overdue Items</span>
+            <span class="summary-value danger">1</span>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Sidebar - Suppliers -->
+        <div class="supplier-sidebar">
+            <div class="sidebar-header">Awarded Suppliers</div>
+            <div class="supplier-list">
+                <div class="supplier-item active">
+                    <div class="supplier-name">Analytical Instruments (Pvt) Ltd</div>
+                    <div class="supplier-items">Items 1, 3 (2 items)</div>
+                    <div class="supplier-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill delivered" style="width: 75%;"></div>
+                        </div>
+                        <span class="progress-text">75% complete</span>
+                    </div>
+                </div>
+
+                <div class="supplier-item">
+                    <div class="supplier-name">Delmege Forsyth & Co. Ltd</div>
+                    <div class="supplier-items">Item 4 (1 item)</div>
+                    <div class="supplier-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill delivered" style="width: 100%;"></div>
+                        </div>
+                        <span class="progress-text">Complete</span>
+                    </div>
+                </div>
+
+                <div class="supplier-item">
+                    <div class="supplier-name">Hayleys PLC</div>
+                    <div class="supplier-items">Items 2, 5 (2 items)</div>
+                    <div class="supplier-progress">
+                        <div class="progress-bar">
+                            <div class="progress-fill partial" style="width: 40%;"></div>
+                        </div>
+                        <span class="progress-text">40% complete</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <div class="supplier-header">
+                <div class="supplier-info">
+                    <h2>Analytical Instruments (Pvt) Ltd</h2>
+                    <div class="supplier-meta">
+                        Contract Date: Feb 15, 2024 | PO #: SLIB-2024-0156
+                    </div>
+                </div>
+                <div class="contract-badge">
+                    <div class="contract-label">Contract Value</div>
+                    <div class="contract-value">LKR 3,245,000</div>
+                </div>
+            </div>
+
+            <!-- Performance Security -->
+            <div class="security-card">
+                <div class="security-header">
+                    <span class="security-title">Performance Security (10%)</span>
+                    <span class="security-status active">Active</span>
+                </div>
+                <div class="security-details">
+                    <div class="security-detail">
+                        <div class="detail-value">LKR 324,500</div>
+                        <div class="detail-label">Amount</div>
+                    </div>
+                    <div class="security-detail">
+                        <div class="detail-value">Bank of Ceylon</div>
+                        <div class="detail-label">Issuing Bank</div>
+                    </div>
+                    <div class="security-detail">
+                        <div class="detail-value">BG/2024/1234</div>
+                        <div class="detail-label">Guarantee No.</div>
+                    </div>
+                    <div class="security-detail">
+                        <div class="detail-value">Aug 15, 2024</div>
+                        <div class="detail-label">Expiry Date</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VRC Section -->
+            <div style="background:white; border-radius:12px; padding:20px; margin-bottom:20px; border:1px solid #e0e0e0;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+                    <div>
+                        <div style="font-size:15px; font-weight:600; color:#333;">Contract Variation Requests (VRC)</div>
+                        <div style="font-size:12px; color:#666; margin-top:2px;">Post-award variations reviewed by Variation Review Committee</div>
+                    </div>
+                    <button style="padding:6px 14px; background:#1a237e; color:white; border:none; border-radius:6px; font-size:13px; cursor:pointer;">+ New Variation Request</button>
+                </div>
+                <table style="width:100%; border-collapse:collapse; font-size:13px; margin-bottom:12px;">
+                    <thead>
+                        <tr style="background:#f5f5f5;">
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">VRC #</th>
+                            <th style="padding:10px 12px; text-align:left; font-weight:500;">Description</th>
+                            <th style="padding:10px 12px; text-align:right; font-weight:500;">Cost Impact (LKR)</th>
+                            <th style="padding:10px 12px; text-align:right; font-weight:500;">Aggregate %</th>
+                            <th style="padding:10px 12px; text-align:center; font-weight:500;">Approval Level</th>
+                            <th style="padding:10px 12px; text-align:center; font-weight:500;">Status</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="border-bottom:1px solid #f0f0f0;">
+                            <td style="padding:10px 12px;">VRC-001</td>
+                            <td style="padding:10px 12px;">Additional calibration equipment included</td>
+                            <td style="padding:10px 12px; text-align:right; font-family:monospace;">+450,000</td>
+                            <td style="padding:10px 12px; text-align:right;">3.6%</td>
+                            <td style="padding:10px 12px; text-align:center;"><span style="padding:3px 10px; background:#e3f2fd; color:#1565c0; border-radius:10px; font-size:11px;">AO</span></td>
+                            <td style="padding:10px 12px; text-align:center;"><span style="padding:3px 10px; background:#e8f5e9; color:#2e7d32; border-radius:10px; font-size:11px;">Approved</span></td>
+                        </tr>
+                    </tbody>
+                </table>
+                <div style="padding:10px 12px; background:#f7fafc; border-radius:6px; font-size:12px; color:#4a5568;">
+                    <strong>Approval authority thresholds:</strong><br>
+                    • AO: Aggregate ≤7.5% AND amount &lt; DPC threshold<br>
+                    • CAO: Aggregate ≤10% AND amount &lt; MPC threshold<br>
+                    • Cabinet: Aggregate &gt;10% OR amount ≥ MPC threshold
+                </div>
+            </div>
+
+            <!-- Items Tracking -->
+            <div class="items-section">
+                <div class="items-header">
+                    <span class="items-title">Delivery & Installation Tracking</span>
+                    <div class="items-filter">
+                        <button class="filter-btn active">All</button>
+                        <button class="filter-btn">Pending</button>
+                        <button class="filter-btn">In Progress</button>
+                        <button class="filter-btn">Complete</button>
+                    </div>
+                </div>
+
+                <!-- Item 1 - Expanded -->
+                <div class="item-row">
+                    <div class="item-header">
+                        <span class="item-expand">V</span>
+                        <div class="item-info">
+                            <div class="item-name">Item 1: Laboratory Incubator</div>
+                            <div class="item-desc">Model: Memmert IN110 | Make: Memmert (Germany)</div>
+                        </div>
+                        <div class="item-qty">
+                            <div class="qty-value">3</div>
+                            <div class="qty-label">Units</div>
+                        </div>
+                        <div class="item-milestones">
+                            <div class="milestone-dot complete">1</div>
+                            <div class="milestone-dot complete">2</div>
+                            <div class="milestone-dot current">3</div>
+                            <div class="milestone-dot pending">4</div>
+                        </div>
+                        <div class="item-status">
+                            <span class="status-tag installing">Installing</span>
+                        </div>
+                    </div>
+
+                    <div class="item-detail">
+                        <div class="milestone-timeline">
+                            <div class="timeline-step complete">
+                                <div class="step-icon complete">1</div>
+                                <div class="step-content">
+                                    <div class="step-name">Order Confirmed</div>
+                                    <div class="step-date">Feb 16, 2024</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step complete">
+                                <div class="step-icon complete">2</div>
+                                <div class="step-content">
+                                    <div class="step-name">Delivered</div>
+                                    <div class="step-date">Mar 5, 2024</div>
+                                    <div class="step-note">All 3 units received</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="step-icon current">3</div>
+                                <div class="step-content">
+                                    <div class="step-name">Installation</div>
+                                    <div class="step-date">In Progress</div>
+                                    <div class="step-note">2 of 3 installed</div>
+                                </div>
+                            </div>
+                            <div class="timeline-step">
+                                <div class="step-icon pending">4</div>
+                                <div class="step-content">
+                                    <div class="step-name">Commissioned</div>
+                                    <div class="step-date">Due: Mar 20</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="detail-actions">
+                            <button class="action-btn">View Documents</button>
+                            <button class="action-btn">Add Note</button>
+                            <button class="action-btn primary">Update Status</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Item 3 - Collapsed -->
+                <div class="item-row">
+                    <div class="item-header">
+                        <span class="item-expand">&gt;</span>
+                        <div class="item-info">
+                            <div class="item-name">Item 3: UV-Vis Spectrophotometer</div>
+                            <div class="item-desc">Model: UV-1900i | Make: Shimadzu (Japan)</div>
+                        </div>
+                        <div class="item-qty">
+                            <div class="qty-value">1</div>
+                            <div class="qty-label">Unit</div>
+                        </div>
+                        <div class="item-milestones">
+                            <div class="milestone-dot complete">1</div>
+                            <div class="milestone-dot complete">2</div>
+                            <div class="milestone-dot complete">3</div>
+                            <div class="milestone-dot complete">4</div>
+                        </div>
+                        <div class="item-status">
+                            <span class="status-tag delivered">Commissioned</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Activity -->
+        <div class="activity-panel">
+            <div class="panel-header">Recent Activity</div>
+
+            <div class="activity-list">
+                <div class="activity-item">
+                    <div class="activity-icon install">I</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Installation update:</strong> 2nd unit of Laboratory Incubator installed at Lab B
+                        </div>
+                        <div class="activity-time">Today, 2:30 PM</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon complete">OK</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Item 3 commissioned:</strong> Spectrophotometer passed all acceptance tests
+                        </div>
+                        <div class="activity-time">Yesterday, 4:15 PM</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon install">I</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Installation started:</strong> 1st unit of Laboratory Incubator installed at Lab A
+                        </div>
+                        <div class="activity-time">Mar 8, 2024</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon delivery">D</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Delivery received:</strong> 3x Laboratory Incubator units delivered to stores
+                        </div>
+                        <div class="activity-time">Mar 5, 2024</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon delivery">D</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Delivery received:</strong> 1x UV-Vis Spectrophotometer delivered
+                        </div>
+                        <div class="activity-time">Mar 1, 2024</div>
+                    </div>
+                </div>
+
+                <div class="activity-item">
+                    <div class="activity-icon note">N</div>
+                    <div class="activity-content">
+                        <div class="activity-text">
+                            <strong>Note added:</strong> Performance security document verified and filed
+                        </div>
+                        <div class="activity-time">Feb 18, 2024</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="upcoming-section">
+                <div class="upcoming-title">Upcoming Deadlines</div>
+                <div class="upcoming-item">
+                    <span class="upcoming-name">Item 1 Commissioning</span>
+                    <span class="upcoming-date">Mar 20</span>
+                </div>
+                <div class="upcoming-item">
+                    <span class="upcoming-name">Training Session</span>
+                    <span class="upcoming-date">Mar 25</span>
+                </div>
+                <div class="upcoming-item">
+                    <span class="upcoming-name">Final Payment Due</span>
+                    <span class="upcoming-date">Apr 15</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

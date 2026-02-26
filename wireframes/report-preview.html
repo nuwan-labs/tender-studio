@@ -1,0 +1,1083 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Report Preview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #2196f3;
+            color: white;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* Left Sidebar - Table of Contents */
+        .toc-sidebar {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .toc-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            font-weight: 600;
+            color: #1a237e;
+        }
+
+        .toc-section {
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .toc-section-title {
+            padding: 12px 16px;
+            font-size: 13px;
+            font-weight: 600;
+            color: #333;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toc-section-title:hover {
+            background: #f5f5f5;
+        }
+
+        .toc-section-title.active {
+            background: #e3f2fd;
+            color: #1a237e;
+        }
+
+        .toc-items {
+            padding: 0 16px 12px 32px;
+        }
+
+        .toc-item {
+            padding: 6px 0;
+            font-size: 12px;
+            color: #666;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .toc-item:hover {
+            color: #1a237e;
+        }
+
+        .toc-item.active {
+            color: #1a237e;
+            font-weight: 500;
+        }
+
+        .toc-status {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 10px;
+        }
+
+        .status-complete {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-incomplete {
+            background: #fff3e0;
+            color: #ef6c00;
+        }
+
+        .status-error {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        /* Main Content - Report Preview */
+        .main-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 24px;
+            background: #e0e0e0;
+        }
+
+        .report-container {
+            max-width: 850px;
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+            min-height: 1100px;
+        }
+
+        .report-page {
+            padding: 60px;
+        }
+
+        .report-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .report-logo {
+            width: 80px;
+            height: 80px;
+            background: #1a237e;
+            border-radius: 50%;
+            margin: 0 auto 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 24px;
+        }
+
+        .report-title {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a237e;
+            margin-bottom: 8px;
+        }
+
+        .report-subtitle {
+            font-size: 16px;
+            color: #666;
+        }
+
+        .report-section {
+            margin-bottom: 32px;
+        }
+
+        .section-number {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a237e;
+            margin-bottom: 8px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 16px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #1a237e;
+        }
+
+        .report-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 16px;
+            font-size: 12px;
+        }
+
+        .report-table th {
+            background: #1a237e;
+            color: white;
+            padding: 10px 12px;
+            text-align: left;
+            font-weight: 500;
+        }
+
+        .report-table td {
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .report-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .report-text {
+            font-size: 13px;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 12px;
+        }
+
+        .placeholder {
+            background: #fff3e0;
+            border: 1px dashed #ff9800;
+            padding: 4px 8px;
+            border-radius: 4px;
+            color: #e65100;
+            font-style: italic;
+        }
+
+        .ai-generated {
+            background: #e3f2fd;
+            border-left: 3px solid #2196f3;
+            padding: 12px;
+            margin: 12px 0;
+            position: relative;
+        }
+
+        .ai-badge {
+            position: absolute;
+            top: -10px;
+            right: 12px;
+            background: #2196f3;
+            color: white;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 10px;
+        }
+
+        .signature-table {
+            margin-top: 40px;
+        }
+
+        .signature-table td {
+            padding: 20px;
+            vertical-align: top;
+        }
+
+        .signature-line {
+            border-bottom: 1px solid #333;
+            height: 40px;
+            margin-bottom: 8px;
+        }
+
+        .signature-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        /* Right Sidebar - Validation & Actions */
+        .action-sidebar {
+            width: 320px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-section {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .sidebar-title {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .validation-summary {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .validation-stat {
+            flex: 1;
+            text-align: center;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .validation-stat.success {
+            background: #e8f5e9;
+        }
+
+        .validation-stat.warning {
+            background: #fff3e0;
+        }
+
+        .validation-stat.error {
+            background: #ffebee;
+        }
+
+        .validation-stat .number {
+            font-size: 24px;
+            font-weight: bold;
+        }
+
+        .validation-stat.success .number { color: #2e7d32; }
+        .validation-stat.warning .number { color: #ef6c00; }
+        .validation-stat.error .number { color: #c62828; }
+
+        .validation-stat .label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .validation-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f5f5f5;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+
+        .validation-item.error {
+            background: #ffebee;
+            border-left: 3px solid #c62828;
+        }
+
+        .validation-item.warning {
+            background: #fff3e0;
+            border-left: 3px solid #ff9800;
+        }
+
+        .validation-icon {
+            font-size: 16px;
+        }
+
+        .validation-text {
+            flex: 1;
+        }
+
+        .validation-action {
+            color: #1a237e;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .export-btn {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .export-btn:hover {
+            background: #e3f2fd;
+            border-color: #2196f3;
+        }
+
+        .export-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .export-icon {
+            width: 40px;
+            height: 40px;
+            background: #1a237e;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 18px;
+        }
+
+        .export-icon.word { background: #2b579a; }
+        .export-icon.pdf { background: #f40f02; }
+
+        .export-info {
+            flex: 1;
+        }
+
+        .export-title {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .export-desc {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .template-selector {
+            margin-bottom: 16px;
+        }
+
+        .template-selector label {
+            display: block;
+            font-size: 12px;
+            color: #666;
+            margin-bottom: 6px;
+        }
+
+        .template-selector select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .annexure-list {
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .annexure-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .annexure-checkbox {
+            width: 18px;
+            height: 18px;
+        }
+
+        .annexure-name {
+            flex: 1;
+        }
+
+        .annexure-size {
+            font-size: 11px;
+            color: #999;
+        }
+
+        /* Page Navigation */
+        .page-nav {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            padding: 16px;
+            background: #f5f5f5;
+            border-radius: 8px;
+            margin-top: auto;
+        }
+
+        .page-btn {
+            width: 36px;
+            height: 36px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .page-btn.active {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        .page-info {
+            display: flex;
+            align-items: center;
+            font-size: 13px;
+            color: #666;
+            padding: 0 12px;
+        }
+
+        /* Zoom Controls */
+        .zoom-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: fixed;
+            bottom: 24px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .zoom-btn {
+            width: 32px;
+            height: 32px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            border-radius: 4px;
+            font-size: 18px;
+        }
+
+        .zoom-btn:hover {
+            background: #f0f0f0;
+        }
+
+        .zoom-level {
+            font-size: 13px;
+            color: #666;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        /* Edit Mode Indicator */
+        .edit-mode-bar {
+            background: #fff3e0;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            border-bottom: 1px solid #ffcc80;
+        }
+
+        .edit-mode-text {
+            flex: 1;
+            font-size: 13px;
+            color: #e65100;
+        }
+
+        .edit-mode-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-sm {
+            padding: 4px 12px;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Report Preview - PR 211-1</h1>
+        <div class="header-actions">
+            <button class="btn btn-outline">Edit Narrative</button>
+            <button class="btn btn-outline">Regenerate</button>
+            <button class="btn btn-secondary">Preview PDF</button>
+            <button class="btn btn-primary">Export</button>
+        </div>
+    </div>
+
+    <!-- Edit Mode Bar (shown when editing) -->
+    <div class="edit-mode-bar" style="display: none;">
+        <span class="edit-mode-text">Editing: Section 6 - Evaluation Methodology</span>
+        <div class="edit-mode-actions">
+            <button class="btn btn-outline btn-sm">Discard</button>
+            <button class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Sidebar - Table of Contents -->
+        <div class="toc-sidebar">
+            <div class="toc-header">Report Sections</div>
+
+            <div class="toc-section">
+                <div class="toc-section-title active">1. Introduction</div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">2. Tender Information</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 2.1: Tender Details
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">3. BEC Composition</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 3.1: Committee Members
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">4. Bidder Summary</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 4.1: Bidders List
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Table 4.2: Bid Security
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">5. Document Verification</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 5.1: Document Checklist
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">6. Evaluation Methodology</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Narrative
+                        <span class="toc-status status-warning">AI Draft</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">7-11. Item Evaluations</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Item 1: Laboratory Incubator
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Item 2: Digital Microscope
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Item 3: Spectrophotometer
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item active">
+                        Item 4: Centrifuge
+                        <span class="toc-status status-error">1 Error</span>
+                    </div>
+                    <div class="toc-item">
+                        Item 5: Water Bath
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">10. Price Schedules</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 10.1: Price Adjustment (14 steps)
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">10a. Post-Qualification</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Post-Qualification Checklist
+                        <span class="toc-status status-warning">AI Draft</span>
+                    </div>
+                    <div class="toc-item">
+                        Financial Capacity Verification
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Technical Capacity & Experience
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Manufacturer Authorization
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">11. Recommendations</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 11.1: Award Summary
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                    <div class="toc-item">
+                        Narrative
+                        <span class="toc-status status-warning">AI Draft</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">12. Clarifications</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Table 12.1: Clarification Summary
+                        <span class="toc-status status-complete">Complete</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">13. Conclusion</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Narrative
+                        <span class="toc-status status-warning">AI Draft</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">14. Signatures</div>
+                <div class="toc-items">
+                    <div class="toc-item">
+                        Signature Table
+                        <span class="toc-status status-complete">Ready</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="toc-section">
+                <div class="toc-section-title">Annexures (5 auto-generated)</div>
+                <div class="toc-items">
+                    <div class="toc-item">A: Pre-Bid Meeting Minutes</div>
+                    <div class="toc-item">B: Clarification Threads</div>
+                    <div class="toc-item">C: Bid Opening Record</div>
+                    <div class="toc-item">D: Price Schedules (Detailed)</div>
+                    <div class="toc-item">E: Document Checklists</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Report Preview -->
+        <div class="main-content">
+            <div class="report-container">
+                <div class="report-page">
+                    <!-- Report Header -->
+                    <div class="report-header">
+                        <div class="report-logo">SLIB</div>
+                        <div class="report-title">BID EVALUATION REPORT</div>
+                        <div class="report-subtitle">PR 211-1: Supply of Laboratory Equipment</div>
+                    </div>
+
+                    <!-- Section: Item 4 Evaluation (showing validation error example) -->
+                    <div class="report-section">
+                        <div class="section-number">Section 9 (Technical Compliance — Item 4) | Report: 15 sections total</div>
+                        <div class="section-title">Item 4: Centrifuge - Technical Evaluation</div>
+
+                        <div class="report-text">
+                            This section presents the technical compliance evaluation for Item 4: Centrifuge
+                            (Quantity: 2 units). A total of <strong>4 bidders</strong> submitted quotations
+                            for this item.
+                        </div>
+
+                        <!-- Compliance Table -->
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 30px;">No.</th>
+                                    <th style="width: 40px;">C/NC</th>
+                                    <th style="width: 180px;">Requirement</th>
+                                    <th>Delmege Forsyth</th>
+                                    <th>Analytical Instruments</th>
+                                    <th>Hayleys PLC</th>
+                                    <th>Laugfs Holdings</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>1</td>
+                                    <td style="text-align: center; font-weight: bold;">C</td>
+                                    <td>Maximum Speed >= 15,000 RPM</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #ffebee; text-align: center;">Reject</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                </tr>
+                                <tr>
+                                    <td>2</td>
+                                    <td style="text-align: center; font-weight: bold;">C</td>
+                                    <td>Temperature Control: -20 to +40C</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                </tr>
+                                <tr>
+                                    <td>3</td>
+                                    <td style="text-align: center;"></td>
+                                    <td>Timer: 0-99 minutes</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #ffebee; text-align: center;">Reject</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                </tr>
+                                <tr>
+                                    <td>4</td>
+                                    <td style="text-align: center; font-weight: bold;">C</td>
+                                    <td>Rotor Types: Fixed + Swing-out</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #ffebee; text-align: center;">Reject</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                </tr>
+                                <tr>
+                                    <td>5</td>
+                                    <td style="text-align: center; font-weight: bold;">C</td>
+                                    <td>Capacity: >= 24 x 15ml tubes</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                    <td style="background: #e8f5e9; text-align: center;">Accept</td>
+                                </tr>
+                                <tr style="font-weight: bold; background: #f5f5f5;">
+                                    <td colspan="3" style="text-align: right;">Technical Responsiveness:</td>
+                                    <td style="background: #e8f5e9; text-align: center; color: #2e7d32;">Responsive</td>
+                                    <td style="background: #e8f5e9; text-align: center; color: #2e7d32;">Responsive</td>
+                                    <td style="background: #ffebee; text-align: center; color: #c62828;">Non-Responsive</td>
+                                    <td style="background: #e8f5e9; text-align: center; color: #2e7d32;">Responsive</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- Rejection Notes -->
+                        <div class="report-text" style="margin-top: 16px;">
+                            <strong>Rejection Notes:</strong>
+                        </div>
+                        <table class="report-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 140px;">Bidder</th>
+                                    <th style="width: 140px;">Requirement</th>
+                                    <th>Reason for Rejection</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td>Hayleys PLC</td>
+                                    <td>Maximum Speed</td>
+                                    <td>Offered 12,000 RPM which is below the mandatory minimum of 15,000 RPM specified in technical requirements.</td>
+                                </tr>
+                                <tr>
+                                    <td>Hayleys PLC</td>
+                                    <td>Rotor Types</td>
+                                    <td>Only fixed-angle rotor included. Swing-out rotor not offered as required.</td>
+                                </tr>
+                                <tr>
+                                    <td>Analytical Instruments</td>
+                                    <td>Timer</td>
+                                    <td style="background: #fff3e0;">
+                                        <span class="placeholder">[Enter rejection reason]</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <!-- AI Generated Narrative -->
+                        <div class="ai-generated">
+                            <span class="ai-badge">AI Draft - Review Required</span>
+                            <div class="report-text">
+                                For Item 4 (Centrifuge), four bidders submitted quotations. After technical evaluation
+                                against the specified requirements, <strong>three bidders</strong> (Delmege Forsyth,
+                                Analytical Instruments, and Laugfs Holdings) were found technically responsive.
+                                <strong>Hayleys PLC</strong> was determined non-responsive due to failure to meet
+                                two compulsory requirements: maximum speed (offered 12,000 RPM vs required 15,000 RPM)
+                                and rotor type availability (swing-out rotor not offered).
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Zoom Controls -->
+            <div class="zoom-controls">
+                <button class="zoom-btn">-</button>
+                <span class="zoom-level">100%</span>
+                <button class="zoom-btn">+</button>
+                <button class="zoom-btn" title="Fit to width">[ ]</button>
+            </div>
+        </div>
+
+        <!-- Right Sidebar - Validation & Actions -->
+        <div class="action-sidebar">
+            <!-- Validation Summary -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">Validation Status</div>
+                <div class="validation-summary">
+                    <div class="validation-stat success">
+                        <div class="number">18</div>
+                        <div class="label">Complete</div>
+                    </div>
+                    <div class="validation-stat warning">
+                        <div class="number">2</div>
+                        <div class="label">AI Drafts</div>
+                    </div>
+                    <div class="validation-stat error">
+                        <div class="number">1</div>
+                        <div class="label">Errors</div>
+                    </div>
+                </div>
+
+                <!-- Validation Items -->
+                <div class="validation-item error">
+                    <span class="validation-icon">!</span>
+                    <span class="validation-text">Missing rejection reason for Analytical Instruments (Item 4, Timer)</span>
+                    <span class="validation-action">Go to</span>
+                </div>
+
+                <div class="validation-item warning">
+                    <span class="validation-icon">~</span>
+                    <span class="validation-text">AI-generated narrative in Section 6 not yet reviewed</span>
+                    <span class="validation-action">Review</span>
+                </div>
+
+                <div class="validation-item warning">
+                    <span class="validation-icon">~</span>
+                    <span class="validation-text">AI-generated narrative in Section 13 not yet reviewed</span>
+                    <span class="validation-action">Review</span>
+                </div>
+            </div>
+
+            <!-- Template Selection -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">Report Template</div>
+                <div class="template-selector">
+                    <label>Active Template</label>
+                    <select>
+                        <option selected>Standard BEC Report (v2.1)</option>
+                        <option>Simplified Report</option>
+                        <option>Detailed Report with Annexures</option>
+                        <option>Custom Template...</option>
+                    </select>
+                </div>
+                <button class="btn btn-outline" style="width: 100%;">Edit Template</button>
+            </div>
+
+            <!-- Annexures -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">
+                    Annexures
+                    <span style="font-size: 12px; color: #666;">3 selected</span>
+                </div>
+                <div class="annexure-list">
+                    <div class="annexure-item">
+                        <input type="checkbox" class="annexure-checkbox" checked>
+                        <span class="annexure-name">A: Clarification Threads</span>
+                        <span class="annexure-size">3 threads</span>
+                    </div>
+                    <div class="annexure-item">
+                        <input type="checkbox" class="annexure-checkbox" checked>
+                        <span class="annexure-name">B: Meeting Minutes</span>
+                        <span class="annexure-size">2 sessions</span>
+                    </div>
+                    <div class="annexure-item">
+                        <input type="checkbox" class="annexure-checkbox" checked>
+                        <span class="annexure-name">C: Supporting Documents</span>
+                        <span class="annexure-size">12 files</span>
+                    </div>
+                    <div class="annexure-item">
+                        <input type="checkbox" class="annexure-checkbox">
+                        <span class="annexure-name">D: Original Bid Documents</span>
+                        <span class="annexure-size">45 MB</span>
+                    </div>
+                    <div class="annexure-item">
+                        <input type="checkbox" class="annexure-checkbox">
+                        <span class="annexure-name">E: Price Schedules (Detailed)</span>
+                        <span class="annexure-size">11 files</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Export Options -->
+            <div class="sidebar-section">
+                <div class="sidebar-title">Export Options</div>
+                <div class="export-options">
+                    <div class="export-btn disabled">
+                        <div class="export-icon word">W</div>
+                        <div class="export-info">
+                            <div class="export-title">Microsoft Word (.docx)</div>
+                            <div class="export-desc">Editable format - Fix 1 error first</div>
+                        </div>
+                    </div>
+                    <div class="export-btn disabled">
+                        <div class="export-icon pdf">P</div>
+                        <div class="export-info">
+                            <div class="export-title">PDF Document (.pdf)</div>
+                            <div class="export-desc">Final format - Fix 1 error first</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Page Navigation -->
+            <div class="page-nav">
+                <button class="page-btn">&lt;</button>
+                <button class="page-btn">1</button>
+                <button class="page-btn">2</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn active">10</button>
+                <button class="page-btn">11</button>
+                <button class="page-btn">...</button>
+                <button class="page-btn">24</button>
+                <button class="page-btn">&gt;</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

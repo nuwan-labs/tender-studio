@@ -1,0 +1,1020 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Bid Opening (BOC)</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .tender-ref {
+            background: rgba(255,255,255,0.2);
+            padding: 4px 12px;
+            border-radius: 4px;
+            font-size: 13px;
+        }
+
+        .session-timer {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(76, 175, 80, 0.2);
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        .timer-dot {
+            width: 8px;
+            height: 8px;
+            background: #4caf50;
+            border-radius: 50%;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        .timer-text {
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-danger {
+            background: #f44336;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* Left Panel - BOC Members */
+        .boc-panel {
+            width: 280px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-section {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .panel-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .member-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .member-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+
+        .member-avatar {
+            width: 32px;
+            height: 32px;
+            background: #1a237e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .member-info {
+            flex: 1;
+        }
+
+        .member-name {
+            font-size: 13px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .member-role {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .member-status {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #4caf50;
+        }
+
+        .tender-info {
+            font-size: 13px;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+        }
+
+        .info-label {
+            color: #666;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .checklist-section {
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .checklist-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 13px;
+        }
+
+        .checklist-item input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .checklist-item.checked {
+            color: #999;
+            text-decoration: line-through;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .content-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .bid-count {
+            display: flex;
+            gap: 20px;
+        }
+
+        .count-item {
+            text-align: center;
+        }
+
+        .count-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a237e;
+        }
+
+        .count-label {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .bidders-table {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+        }
+
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background: #1a237e;
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 500;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+            font-size: 14px;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        tr:hover {
+            background: #f9f9f9;
+        }
+
+        .bidder-cell {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .bidder-number {
+            width: 28px;
+            height: 28px;
+            background: #e3f2fd;
+            color: #1a237e;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+        }
+
+        .bidder-name {
+            font-weight: 500;
+            color: #333;
+        }
+
+        .amount-cell {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+        }
+
+        .amount-cell input {
+            width: 150px;
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .amount-cell input:focus {
+            outline: none;
+            border-color: #1a237e;
+            box-shadow: 0 0 0 2px rgba(26,35,126,0.1);
+        }
+
+        .status-cell {
+            text-align: center;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .status-badge.recorded {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .status-badge.pending {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+
+        .security-cell {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .security-check {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .security-check.valid {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+
+        .security-check.invalid {
+            background: #ffebee;
+            color: #c62828;
+        }
+
+        .security-check.pending {
+            background: #f5f5f5;
+            color: #999;
+        }
+
+        .action-cell {
+            display: flex;
+            gap: 8px;
+            justify-content: flex-end;
+        }
+
+        .icon-btn {
+            width: 32px;
+            height: 32px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background: #f5f5f5;
+        }
+
+        /* Right Panel - Current Bid */
+        .detail-panel {
+            width: 380px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .detail-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .detail-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .detail-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .bidder-card {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .bidder-card h3 {
+            font-size: 16px;
+            color: #333;
+            margin-bottom: 4px;
+        }
+
+        .bidder-card p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .security-details {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 16px;
+        }
+
+        .security-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            font-size: 13px;
+        }
+
+        .security-label {
+            color: #666;
+        }
+
+        .security-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .security-value.valid {
+            color: #2e7d32;
+        }
+
+        .security-value.invalid {
+            color: #c62828;
+        }
+
+        .price-breakdown {
+            background: #f9f9f9;
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 16px;
+            font-size: 13px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+        .price-row.total {
+            background: #e3f2fd;
+            font-weight: 600;
+        }
+
+        .documents-list {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .doc-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 12px;
+            background: #f9f9f9;
+            border-radius: 6px;
+        }
+
+        .doc-icon {
+            width: 32px;
+            height: 32px;
+            background: #e3f2fd;
+            color: #1a237e;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+
+        .doc-info {
+            flex: 1;
+        }
+
+        .doc-name {
+            font-size: 13px;
+            color: #333;
+        }
+
+        .doc-status {
+            font-size: 11px;
+        }
+
+        .doc-status.present {
+            color: #2e7d32;
+        }
+
+        .doc-status.missing {
+            color: #c62828;
+        }
+
+        .detail-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .detail-footer .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Add Bidder Row */
+        .add-bidder-row {
+            padding: 16px;
+            text-align: center;
+            border-top: 1px dashed #e0e0e0;
+        }
+
+        .add-bidder-btn {
+            padding: 10px 24px;
+            border: 1px dashed #1a237e;
+            background: transparent;
+            color: #1a237e;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .add-bidder-btn:hover {
+            background: #e3f2fd;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="header-left">
+            <h1>Bid Opening Ceremony</h1>
+            <span class="tender-ref">PR 211-1</span>
+            <div class="session-timer">
+                <span class="timer-dot"></span>
+                <span class="timer-text">Session Active - 00:45:23</span>
+            </div>
+        </div>
+        <div class="header-actions">
+            <button class="btn btn-outline">Print Minutes</button>
+            <button class="btn btn-danger">End Session</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Panel - BOC Info -->
+        <div class="boc-panel">
+            <div class="panel-section">
+                <div class="panel-title">Bid Opening Committee</div>
+                <div class="member-list">
+                    <div class="member-item">
+                        <div class="member-avatar">DR</div>
+                        <div class="member-info">
+                            <div class="member-name">Dr. R. Perera</div>
+                            <div class="member-role">Chairman</div>
+                        </div>
+                        <div class="member-status"></div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar">NS</div>
+                        <div class="member-info">
+                            <div class="member-name">N. Silva</div>
+                            <div class="member-role">Procurement Manager</div>
+                        </div>
+                        <div class="member-status"></div>
+                    </div>
+                    <div class="member-item">
+                        <div class="member-avatar">KF</div>
+                        <div class="member-info">
+                            <div class="member-name">K. Fernando</div>
+                            <div class="member-role">Secretary</div>
+                        </div>
+                        <div class="member-status"></div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section">
+                <div class="panel-title">Tender Details</div>
+                <div class="tender-info">
+                    <div class="info-row">
+                        <span class="info-label">Opening Date</span>
+                        <span class="info-value">Feb 28, 2024</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Opening Time</span>
+                        <span class="info-value">2:00 PM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Closing Time</span>
+                        <span class="info-value">1:30 PM</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Items</span>
+                        <span class="info-value">5</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Est. Value</span>
+                        <span class="info-value">LKR 12.5M</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-section checklist-section">
+                <div class="panel-title">BOC Opening Checklist</div>
+                <div class="checklist-item checked">
+                    <input type="checkbox" checked disabled>
+                    <span>BOC COI declarations signed (all members)</span>
+                </div>
+                <div class="checklist-item checked">
+                    <input type="checkbox" checked disabled>
+                    <span>Verify tender box seal intact</span>
+                </div>
+                <div class="checklist-item checked">
+                    <input type="checkbox" checked disabled>
+                    <span>Closing deadline passed — no early opening</span>
+                </div>
+                <div class="checklist-item checked">
+                    <input type="checkbox" checked disabled>
+                    <span>All bids opened within 30 minutes of closing</span>
+                </div>
+                <div class="checklist-item checked">
+                    <input type="checkbox" checked disabled>
+                    <span>Withdrawal letters checked (sealed bids withheld)</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>Modification envelopes opened first (if any)</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>Rate/Item Total columns taped (covered)</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>BOC members initial: Form of Bid, price summary, bid security letter, discount letter</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>Bid amounts read aloud (total price only)</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>Originals resealed → handed to PMD officer</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>Duplicates placed in separate secure custody</span>
+                </div>
+                <div class="checklist-item">
+                    <input type="checkbox">
+                    <span>BOC minutes signed by all members</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Main Content - Bidders Table -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="content-title">Bids Received</div>
+                <div class="bid-count">
+                    <div class="count-item">
+                        <div class="count-value">11</div>
+                        <div class="count-label">Total Bids</div>
+                    </div>
+                    <div class="count-item">
+                        <div class="count-value">8</div>
+                        <div class="count-label">Recorded</div>
+                    </div>
+                    <div class="count-item">
+                        <div class="count-value">3</div>
+                        <div class="count-label">Pending</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bidders-table">
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th style="width: 40px;">#</th>
+                                <th style="width: 220px;">Bidder Name</th>
+                                <th style="width: 80px; text-align:center;">Withdraw?</th>
+                                <th style="width: 80px; text-align:center;">Modif?</th>
+                                <th style="width: 160px;">Total Bid (Read Aloud)</th>
+                                <th style="width: 130px;">Bid Security</th>
+                                <th style="width: 80px; text-align:center;">Tape ✓</th>
+                                <th style="width: 80px; text-align:center;">Initials ✓</th>
+                                <th style="width: 90px;">Status</th>
+                                <th style="width: 70px;">Details</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><div class="bidder-number">1</div></td>
+                                <td><div class="bidder-name">Analytical Instruments (Pvt) Ltd</div></td>
+                                <td style="text-align:center;"><span style="color:#2e7d32; font-weight:600;">No</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td class="amount-cell"><span>LKR 3,245,000.00</span></td>
+                                <td>
+                                    <div class="security-cell">
+                                        <div class="security-check valid">OK</div>
+                                        <span>LKR 200,000</span>
+                                    </div>
+                                </td>
+                                <td style="text-align:center;"><input type="checkbox" checked title="Rate/Item Total columns taped"></td>
+                                <td style="text-align:center;"><input type="checkbox" checked title="BOC members initialled documents"></td>
+                                <td class="status-cell"><span class="status-badge recorded">Recorded</span></td>
+                                <td><button class="icon-btn" title="View/Edit Details">↗</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="bidder-number">2</div></td>
+                                <td><div class="bidder-name">Delmege Forsyth &amp; Co. Ltd</div></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td class="amount-cell"><span>LKR 2,890,500.00</span></td>
+                                <td>
+                                    <div class="security-cell">
+                                        <div class="security-check valid">OK</div>
+                                        <span>LKR 200,000</span>
+                                    </div>
+                                </td>
+                                <td style="text-align:center;"><input type="checkbox" checked></td>
+                                <td style="text-align:center;"><input type="checkbox" checked></td>
+                                <td class="status-cell"><span class="status-badge recorded">Recorded</span></td>
+                                <td><button class="icon-btn" title="View/Edit Details">↗</button></td>
+                            </tr>
+                            <tr>
+                                <td><div class="bidder-number">3</div></td>
+                                <td><div class="bidder-name">Hayleys PLC</div></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td style="text-align:center;"><span style="color:#ed8936; font-weight:600;">Yes</span></td>
+                                <td class="amount-cell"><span>LKR 3,567,800.00 <small style="color:#999;">(modified)</small></span></td>
+                                <td>
+                                    <div class="security-cell">
+                                        <div class="security-check valid">OK</div>
+                                        <span>LKR 200,000</span>
+                                    </div>
+                                </td>
+                                <td style="text-align:center;"><input type="checkbox" checked></td>
+                                <td style="text-align:center;"><input type="checkbox" checked></td>
+                                <td class="status-cell"><span class="status-badge recorded">Recorded</span></td>
+                                <td><button class="icon-btn">↗</button></td>
+                            </tr>
+                            <tr style="background: #fffde7;">
+                                <td><div class="bidder-number">4</div></td>
+                                <td><div class="bidder-name">Laugfs Holdings Ltd</div></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">No</span></td>
+                                <td class="amount-cell"><input type="text" placeholder="Enter total amount..."></td>
+                                <td>
+                                    <div class="security-cell">
+                                        <div class="security-check pending">?</div>
+                                        <span style="color: #999;">Pending</span>
+                                    </div>
+                                </td>
+                                <td style="text-align:center;"><input type="checkbox"></td>
+                                <td style="text-align:center;"><input type="checkbox"></td>
+                                <td class="status-cell"><span class="status-badge pending">Recording</span></td>
+                                <td><button class="icon-btn" style="background:#e8f5e9; border-color:#4caf50;">S</button></td>
+                            </tr>
+                            <tr style="background: #fff5f5;">
+                                <td><div class="bidder-number">5</div></td>
+                                <td>
+                                    <div class="bidder-name">JL Morison Son &amp; Jones</div>
+                                    <div style="font-size:10px; color:#c62828; margin-top:2px;">⚠ Withdrawal letter received — bid NOT opened</div>
+                                </td>
+                                <td style="text-align:center;"><span style="color:#c62828; font-weight:600;">Yes</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">—</span></td>
+                                <td class="amount-cell" style="color:#999; font-style:italic;"><span>Not opened (sealed)</span></td>
+                                <td><span style="color:#999; font-size:12px;">Returned after award</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">—</span></td>
+                                <td style="text-align:center;"><span style="color:#999;">—</span></td>
+                                <td class="status-cell"><span class="status-badge" style="background:#fee2e2; color:#991b1b;">Withdrawn</span></td>
+                                <td><button class="icon-btn">↗</button></td>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="add-bidder-row">
+                        <button class="add-bidder-btn">+ Add Another Bidder</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Bid Details -->
+        <div class="detail-panel">
+            <div class="detail-header">
+                <span class="detail-title">Bid #4 Details</span>
+                <button class="detail-close">x</button>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-section">
+                    <div class="section-title">Bidder Information</div>
+                    <div class="bidder-card">
+                        <h3>Laugfs Holdings Ltd</h3>
+                        <p>No. 45, Nawam Mawatha, Colombo 02</p>
+                        <p style="margin-top: 8px;">Contact: M. Rathnayake | 011-2345678</p>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-title">Bid Security</div>
+                    <div class="security-details">
+                        <div class="security-row">
+                            <span class="security-label">Amount</span>
+                            <span class="security-value">LKR 200,000.00</span>
+                        </div>
+                        <div class="security-row">
+                            <span class="security-label">Type</span>
+                            <span class="security-value">Bank Guarantee</span>
+                        </div>
+                        <div class="security-row">
+                            <span class="security-label">Bank</span>
+                            <span class="security-value">Commercial Bank</span>
+                        </div>
+                        <div class="security-row">
+                            <span class="security-label">Guarantee No.</span>
+                            <span class="security-value">BG/2024/5678</span>
+                        </div>
+                        <div class="security-row">
+                            <span class="security-label">Validity</span>
+                            <span class="security-value valid">Valid until Jun 30, 2024</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-title">Price Breakdown (As Read)</div>
+                    <div class="price-breakdown">
+                        <div class="price-row">
+                            <span>Item 1: Laboratory Incubator (3)</span>
+                            <span>LKR 450,000</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Item 2: Digital Microscope (5)</span>
+                            <span>LKR 875,000</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Item 3: Spectrophotometer (1)</span>
+                            <span>LKR 1,200,000</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Item 4: Centrifuge (2)</span>
+                            <span>LKR 680,000</span>
+                        </div>
+                        <div class="price-row">
+                            <span>Item 5: Water Bath (4)</span>
+                            <span>LKR 320,000</span>
+                        </div>
+                        <div class="price-row total">
+                            <span>Grand Total</span>
+                            <span>LKR 3,525,000</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-title">Document Checklist</div>
+                    <div class="documents-list">
+                        <div class="doc-item">
+                            <div class="doc-icon">D</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Bid Form</div>
+                                <div class="doc-status present">Present & Signed</div>
+                            </div>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">D</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Price Schedule</div>
+                                <div class="doc-status present">Present & Signed</div>
+                            </div>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">D</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Bid Security</div>
+                                <div class="doc-status present">Present</div>
+                            </div>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">D</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Company Registration</div>
+                                <div class="doc-status missing">Missing</div>
+                            </div>
+                        </div>
+                        <div class="doc-item">
+                            <div class="doc-icon">D</div>
+                            <div class="doc-info">
+                                <div class="doc-name">Tax Clearance</div>
+                                <div class="doc-status present">Present</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-footer">
+                <button class="btn btn-secondary">Add Note</button>
+                <button class="btn btn-primary">Confirm & Save</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

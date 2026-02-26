@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TenderStudio - Audit Trail</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            min-height: 100vh;
+        }
+
+        .header {
+            background: #1a237e;
+            color: white;
+            padding: 12px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header h1 {
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: #4caf50;
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid rgba(255,255,255,0.5);
+            color: white;
+        }
+
+        .layout {
+            display: flex;
+            height: calc(100vh - 52px);
+        }
+
+        /* Left Sidebar - Filters */
+        .filter-sidebar {
+            width: 300px;
+            background: white;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar-header {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .sidebar-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .clear-btn {
+            font-size: 12px;
+            color: #1a237e;
+            background: none;
+            border: none;
+            cursor: pointer;
+        }
+
+        .filter-section {
+            padding: 16px;
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .filter-label {
+            font-size: 12px;
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .filter-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .date-range {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .date-range input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+        }
+
+        .checkbox-item input {
+            width: 16px;
+            height: 16px;
+        }
+
+        .entity-type {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+
+        .entity-chip {
+            padding: 6px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 16px;
+            font-size: 12px;
+            cursor: pointer;
+            background: white;
+        }
+
+        .entity-chip.active {
+            background: #1a237e;
+            color: white;
+            border-color: #1a237e;
+        }
+
+        .filter-footer {
+            padding: 16px;
+            margin-top: auto;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .apply-btn {
+            width: 100%;
+            padding: 12px;
+            background: #1a237e;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .content-header {
+            padding: 16px 24px;
+            background: white;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .results-info {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .results-info strong {
+            color: #333;
+        }
+
+        .view-toggle {
+            display: flex;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+
+        .view-btn {
+            padding: 8px 16px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .view-btn.active {
+            background: #1a237e;
+            color: white;
+        }
+
+        .audit-list {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 24px;
+        }
+
+        /* Timeline View */
+        .timeline-container {
+            position: relative;
+        }
+
+        .timeline-date {
+            position: sticky;
+            top: 0;
+            background: #f5f5f5;
+            padding: 8px 0;
+            font-size: 13px;
+            font-weight: 600;
+            color: #666;
+            z-index: 10;
+        }
+
+        .timeline-line {
+            position: absolute;
+            left: 24px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .audit-entry {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .entry-time {
+            width: 50px;
+            font-size: 12px;
+            color: #999;
+            text-align: right;
+            padding-top: 4px;
+        }
+
+        .entry-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #1a237e;
+            flex-shrink: 0;
+            margin-top: 6px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .entry-dot.create { background: #4caf50; }
+        .entry-dot.update { background: #2196f3; }
+        .entry-dot.delete { background: #f44336; }
+        .entry-dot.view { background: #9e9e9e; }
+        .entry-dot.decision { background: #ff9800; }
+        .entry-dot.session { background: #9c27b0; }
+        .entry-dot.coi { background: #7b1fa2; }
+        .entry-dot.debarment { background: #c62828; }
+        .entry-dot.award { background: #1565c0; }
+
+        .entry-card {
+            flex: 1;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            overflow: hidden;
+        }
+
+        .entry-header {
+            padding: 12px 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .entry-action {
+            font-weight: 500;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .entry-meta {
+            display: flex;
+            gap: 12px;
+            font-size: 12px;
+            color: #666;
+            margin-top: 4px;
+        }
+
+        .entry-badge {
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .badge-create { background: #e8f5e9; color: #2e7d32; }
+        .badge-update { background: #e3f2fd; color: #1565c0; }
+        .badge-delete { background: #ffebee; color: #c62828; }
+        .badge-decision { background: #fff3e0; color: #ef6c00; }
+        .badge-session { background: #f3e5f5; color: #7b1fa2; }
+        .badge-coi { background: #f3e5f5; color: #7b1fa2; }
+        .badge-debarment { background: #ffebee; color: #c62828; }
+        .badge-award { background: #e3f2fd; color: #1565c0; }
+
+        .entry-body {
+            padding: 12px 16px;
+        }
+
+        .entry-details {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .entry-details code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 12px;
+        }
+
+        .entry-changes {
+            margin-top: 10px;
+            background: #f9f9f9;
+            border-radius: 6px;
+            padding: 10px 12px;
+            font-size: 12px;
+        }
+
+        .change-row {
+            display: flex;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .change-field {
+            font-weight: 500;
+            color: #333;
+            min-width: 120px;
+        }
+
+        .change-old {
+            color: #c62828;
+            text-decoration: line-through;
+        }
+
+        .change-arrow {
+            color: #999;
+        }
+
+        .change-new {
+            color: #2e7d32;
+        }
+
+        .entry-footer {
+            padding: 8px 16px;
+            background: #fafafa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+        }
+
+        .entry-entity {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #1a237e;
+            cursor: pointer;
+        }
+
+        .entry-ip {
+            color: #999;
+            font-family: monospace;
+        }
+
+        /* Right Panel - Entry Detail */
+        .detail-panel {
+            width: 400px;
+            background: white;
+            border-left: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-header {
+            padding: 16px 20px;
+            border-bottom: 1px solid #e0e0e0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .panel-title {
+            font-weight: 600;
+            color: #333;
+        }
+
+        .panel-close {
+            width: 28px;
+            height: 28px;
+            border: none;
+            background: transparent;
+            cursor: pointer;
+            font-size: 18px;
+            color: #666;
+        }
+
+        .panel-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 24px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: #999;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+        }
+
+        .section-value {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .user-card {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: #1a237e;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 500;
+        }
+
+        .user-info h4 {
+            font-size: 14px;
+            color: #333;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .raw-data {
+            background: #263238;
+            color: #aed581;
+            padding: 16px;
+            border-radius: 8px;
+            font-family: monospace;
+            font-size: 12px;
+            line-height: 1.6;
+            overflow-x: auto;
+            white-space: pre-wrap;
+            word-break: break-all;
+        }
+
+        .integrity-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            background: #e8f5e9;
+            border-radius: 8px;
+        }
+
+        .integrity-icon {
+            width: 24px;
+            height: 24px;
+            background: #4caf50;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+        }
+
+        .integrity-text {
+            flex: 1;
+        }
+
+        .integrity-text strong {
+            color: #2e7d32;
+            font-size: 13px;
+        }
+
+        .integrity-text p {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .panel-footer {
+            padding: 16px 20px;
+            border-top: 1px solid #e0e0e0;
+            display: flex;
+            gap: 12px;
+        }
+
+        .panel-footer .btn {
+            flex: 1;
+            justify-content: center;
+        }
+
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Audit Trail</h1>
+        <div class="header-actions">
+            <button class="btn btn-outline">Generate Report</button>
+            <button class="btn btn-primary">Export to CSV</button>
+        </div>
+    </div>
+
+    <div class="layout">
+        <!-- Left Sidebar - Filters -->
+        <div class="filter-sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">Filters</span>
+                <button class="clear-btn">Clear All</button>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Search</div>
+                <input type="text" class="filter-input" placeholder="Search actions, users, entities...">
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Date Range</div>
+                <div class="date-range">
+                    <input type="date" value="2024-01-01">
+                    <span>to</span>
+                    <input type="date" value="2024-03-15">
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Tender</div>
+                <select class="filter-input">
+                    <option>All Tenders</option>
+                    <option selected>PR 211-1: Laboratory Equipment</option>
+                    <option>PR 198-2: Office Furniture</option>
+                    <option>PR 185-1: IT Equipment</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">User</div>
+                <select class="filter-input">
+                    <option selected>All Users</option>
+                    <option>N. Silva (PM)</option>
+                    <option>K. Fernando (Secretary)</option>
+                    <option>Dr. R. Perera (Chair)</option>
+                </select>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Action Type</div>
+                <div class="checkbox-group">
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Create</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Update</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Decision</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Session Events</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>COI — Declaration, conflict, recusal</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Debarment — Check, alert, override</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox" checked>
+                        <span>Award — Standstill, debriefing, appeal, LOA</span>
+                    </label>
+                    <label class="checkbox-item">
+                        <input type="checkbox">
+                        <span>View/Access</span>
+                    </label>
+                </div>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-label">Entity Type</div>
+                <div class="entity-type">
+                    <span class="entity-chip active">All</span>
+                    <span class="entity-chip">Tender</span>
+                    <span class="entity-chip">Bidder</span>
+                    <span class="entity-chip">Evaluation</span>
+                    <span class="entity-chip">Clarification</span>
+                    <span class="entity-chip">Session</span>
+                    <span class="entity-chip">Report</span>
+                    <span class="entity-chip">COI</span>
+                    <span class="entity-chip">Debarment</span>
+                    <span class="entity-chip">Award</span>
+                </div>
+            </div>
+
+            <div class="filter-footer">
+                <button class="apply-btn">Apply Filters</button>
+            </div>
+        </div>
+
+        <!-- Main Content - Audit Log -->
+        <div class="main-content">
+            <div class="content-header">
+                <div class="results-info">
+                    Showing <strong>156</strong> entries for <strong>PR 211-1</strong>
+                </div>
+                <div class="view-toggle">
+                    <button class="view-btn active">Timeline</button>
+                    <button class="view-btn">Table</button>
+                </div>
+            </div>
+
+            <div class="audit-list">
+                <div class="timeline-container">
+                    <!-- Today -->
+                    <div class="timeline-date">Today - March 15, 2024</div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">2:45 PM</div>
+                        <div class="entry-dot decision"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">Evaluation Decision Recorded</div>
+                                    <div class="entry-meta">
+                                        <span>K. Fernando</span>
+                                        <span>BEC Secretary</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-decision">Decision</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    Cell decision for <code>Item 4 / Delmege Forsyth / Rotor Types</code>
+                                    changed from <strong>Pending</strong> to <strong>Accept</strong>
+                                </div>
+                                <div class="entry-changes">
+                                    <div class="change-row">
+                                        <span class="change-field">Evidence:</span>
+                                        <span class="change-new">"Fixed + Swing-out rotors confirmed in catalog p.12"</span>
+                                    </div>
+                                    <div class="change-row">
+                                        <span class="change-field">Approved by:</span>
+                                        <span class="change-new">Dr. R. Perera (Chair)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View Cell Details</span>
+                                <span class="entry-ip">192.168.1.45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">2:30 PM</div>
+                        <div class="entry-dot session"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">BEC Session Started</div>
+                                    <div class="entry-meta">
+                                        <span>K. Fernando</span>
+                                        <span>Session #5</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-session">Session</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    Evaluation session started with <strong>3 members</strong> present:
+                                    Dr. R. Perera (Chair), A. Kumari, P. Jayasuriya
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View Session</span>
+                                <span class="entry-ip">192.168.1.45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">10:15 AM</div>
+                        <div class="entry-dot update"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">Clarification Response Entered</div>
+                                    <div class="entry-meta">
+                                        <span>N. Silva</span>
+                                        <span>Procurement Manager</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-update">Update</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    Response added to clarification thread <code>CLR-211-003</code>
+                                    for Analytical Instruments regarding Item 3 specifications
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View Thread</span>
+                                <span class="entry-ip">192.168.1.12</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">9:14 AM</div>
+                        <div class="entry-dot coi"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">COI Declaration Signed</div>
+                                    <div class="entry-meta">
+                                        <span>Dr. Dananjaya Perera</span>
+                                        <span>BEC Member</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-coi">COI</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    Declaration signed (Annexure I) — No conflict declared | <code>PR 211-1 / BEC-Session-03</code>
+                                </div>
+                                <div class="entry-changes">
+                                    <div class="change-row">
+                                        <span class="change-field">Form:</span>
+                                        <span class="change-new">Annexure I (BEC Member)</span>
+                                    </div>
+                                    <div class="change-row">
+                                        <span class="change-field">Conflict declared:</span>
+                                        <span class="change-new">None</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View COI Record</span>
+                                <span class="entry-ip">192.168.1.23</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Yesterday -->
+                    <div class="timeline-date">Yesterday - March 14, 2024</div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">4:45 PM</div>
+                        <div class="entry-dot session"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">BEC Session Ended</div>
+                                    <div class="entry-meta">
+                                        <span>K. Fernando</span>
+                                        <span>Session #4 - Duration: 2h 15m</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-session">Session</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    Session completed. <strong>12 decisions</strong> recorded,
+                                    <strong>3 clarifications</strong> initiated.
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View Session Summary</span>
+                                <span class="entry-ip">192.168.1.45</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="audit-entry">
+                        <div class="entry-time">3:20 PM</div>
+                        <div class="entry-dot create"></div>
+                        <div class="entry-card">
+                            <div class="entry-header">
+                                <div>
+                                    <div class="entry-action">Clarification Thread Created</div>
+                                    <div class="entry-meta">
+                                        <span>K. Fernando</span>
+                                        <span>Thread CLR-211-003</span>
+                                    </div>
+                                </div>
+                                <span class="entry-badge badge-create">Create</span>
+                            </div>
+                            <div class="entry-body">
+                                <div class="entry-details">
+                                    New bidder clarification created for <code>Item 3 / Analytical Instruments</code>
+                                    regarding wavelength calibration certificate
+                                </div>
+                            </div>
+                            <div class="entry-footer">
+                                <span class="entry-entity">View Thread</span>
+                                <span class="entry-ip">192.168.1.45</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel - Entry Detail -->
+        <div class="detail-panel">
+            <div class="panel-header">
+                <span class="panel-title">Entry Details</span>
+                <button class="panel-close">x</button>
+            </div>
+
+            <div class="panel-content">
+                <div class="detail-section">
+                    <div class="section-label">Timestamp</div>
+                    <div class="section-value">March 15, 2024 at 2:45:32 PM (UTC+5:30)</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Action</div>
+                    <div class="section-value">
+                        <span class="entry-badge badge-decision" style="display: inline-block; margin-right: 8px;">Decision</span>
+                        Evaluation Decision Recorded
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Performed By</div>
+                    <div class="user-card">
+                        <div class="user-avatar">KF</div>
+                        <div class="user-info">
+                            <h4>K. Fernando</h4>
+                            <p>BEC Secretary | User ID: USR-0045</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Entity Reference</div>
+                    <div class="section-value">
+                        <div>Tender: PR 211-1</div>
+                        <div>Item: 4 - Centrifuge</div>
+                        <div>Bidder: Delmege Forsyth & Co. Ltd</div>
+                        <div>Requirement: Rotor Types (C)</div>
+                        <div>Cell ID: EVAL-211-1-4-DF-005</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Session Context</div>
+                    <div class="section-value">
+                        <div>Session #5 (Active)</div>
+                        <div>Started: 2:30 PM</div>
+                        <div>Members Present: 3</div>
+                    </div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Raw Audit Data</div>
+                    <div class="raw-data">{
+  "id": "AUD-2024-03-15-1445",
+  "action": "EVAL_DECISION",
+  "entity_type": "evaluation_cell",
+  "entity_id": "EVAL-211-1-4-DF-005",
+  "user_id": "USR-0045",
+  "session_id": "SESS-211-005",
+  "timestamp": "2024-03-15T14:45:32.456Z",
+  "changes": {
+    "decision": {
+      "old": "pending",
+      "new": "accept"
+    },
+    "evidence_note": "Fixed + Swing-out..."
+  },
+  "ip_address": "192.168.1.45",
+  "user_agent": "Mozilla/5.0...",
+  "hash": "a7f8c2e9..."
+}</div>
+                </div>
+
+                <div class="detail-section">
+                    <div class="section-label">Integrity Verification</div>
+                    <div class="integrity-check">
+                        <div class="integrity-icon">OK</div>
+                        <div class="integrity-text">
+                            <strong>Entry Verified</strong>
+                            <p>Hash chain intact. No tampering detected.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-footer">
+                <button class="btn btn-secondary">Copy JSON</button>
+                <button class="btn btn-primary">Export Entry</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
