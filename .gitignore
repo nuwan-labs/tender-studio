@@ -1,8 +1,0 @@
-# Ignore everything
-*
-
-# Except these
-!.gitignore
-!wireframes/
-!wireframes/**
-!SYSTEM_SPECIFICATION.md
