@@ -738,7 +738,7 @@
                 <div class="step-number">4</div>
                 <div class="step-content">
                     <div class="step-title">Committee Assignment</div>
-                    <div class="step-subtitle">BOC & BEC setup</div>
+                    <div class="step-subtitle">BOC & TEC setup</div>
                 </div>
             </div>
             <div class="step-item">
@@ -771,11 +771,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Tender Title <span class="required">*</span></label>
-                        <input type="text" class="form-input" value="Laboratory Equipment Procurement — SLIBTEC Phase I" placeholder="Enter tender title">
+                        <input type="text" class="form-input" value="Laboratory Equipment Procurement — NIRL Phase I" placeholder="Enter tender title">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tender Number <span class="required">*</span></label>
-                        <input type="text" class="form-input" value="PR 211-1" placeholder="e.g. PR 211-1">
+                        <input type="text" class="form-input" value="TN 480-7" placeholder="e.g. TN 480-7">
                     </div>
                 </div>
 
@@ -806,14 +806,14 @@
                     <div class="form-group">
                         <label class="form-label">Procurement Committee (PC) Type <span class="required">*</span></label>
                         <select class="form-input" onchange="updatePCThreshold(this)">
-                            <option value="HLPC">HLPC — High Level (GOSL &gt; LKR 750 Mn)</option>
-                            <option value="SHLPC">SHLPC — Standing High Level (GOSL &gt; LKR 750 Mn)</option>
-                            <option value="MPC">MPC — Ministry (GOSL ≤ LKR 750 Mn)</option>
-                            <option value="DPC" selected>DPC — Departmental (GOSL ≤ LKR 400 Mn) [default]</option>
-                            <option value="PPC">PPC — Project (GOSL ≤ LKR 400 Mn)</option>
-                            <option value="RPC">RPC — Regional (GOSL ≤ LKR 50 Mn)</option>
+                            <option value="HPC">HPC — High Level (NGA &gt; LKR 750 Mn)</option>
+                            <option value="SHPC">SHPC — Standing High Level (NGA &gt; LKR 750 Mn)</option>
+                            <option value="XPC">XPC — Ministry (NGA ≤ LKR 750 Mn)</option>
+                            <option value="CPC" selected>CPC — Departmental (NGA ≤ LKR 400 Mn) [default]</option>
+                            <option value="PJC">PJC — Project (NGA ≤ LKR 400 Mn)</option>
+                            <option value="RGC">RGC — Regional (NGA ≤ LKR 50 Mn)</option>
                         </select>
-                        <div class="form-hint" id="pcThresholdHint">DPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn</div>
+                        <div class="form-hint" id="pcThresholdHint">CPC authority: NGA ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Bidding Procedure <span class="required">*</span></label>
@@ -830,9 +830,9 @@
                     <div class="form-group">
                         <label class="form-label">Funding Source <span class="required">*</span></label>
                         <select class="form-input" onchange="showFfaPanel(this)">
-                            <option value="gosl" selected>GOSL-Funded</option>
+                            <option value="gosl" selected>NGA-Funded</option>
                             <option value="ffa">Foreign-Funded (FFA)</option>
-                            <option value="mixed">Mixed (GOSL + FFA)</option>
+                            <option value="mixed">Mixed (NGA + FFA)</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -856,7 +856,7 @@
                             <option value="">— Select —</option>
                             <option>Foreign Grant</option>
                             <option>Bilateral Loan / Credit</option>
-                            <option>Multilateral Loan / Credit (e.g., World Bank, ADB)</option>
+                            <option>Multilateral Loan / Credit (e.g., Global Development Fund, Regional Development Fund)</option>
                         </select>
                     </div>
                     <div>
@@ -871,18 +871,18 @@
                         <label class="form-label">Specification Preparer <span class="required">*</span></label>
                         <select class="form-input">
                             <option value="">— Select officer who prepared specs —</option>
-                            <option>Dr. A. Wickramasinghe (Technical Dept.)</option>
-                            <option>Eng. S. Perera (Engineering Dept.)</option>
-                            <option>Dr. L. Gamage (Research Dept.)</option>
+                            <option>Dr. H. Madugalle (Technical Dept.)</option>
+                            <option>Eng. R. Kodithuwakku (Engineering Dept.)</option>
+                            <option>Dr. P. Liyanage (Research Dept.)</option>
                         </select>
-                        <div class="form-hint" style="color:#c62828;">⚠ This officer cannot serve on the BEC for this tender (conflict of interest rule).</div>
+                        <div class="form-hint" style="color:#c62828;">⚠ This officer cannot serve on the TEC for this tender (conflict of interest rule).</div>
                     </div>
                     <div class="form-group">
                         <label class="form-label">TCE Prepared By <span class="required">*</span></label>
                         <select class="form-input">
                             <option value="">— Select officer —</option>
-                            <option>Dr. A. Wickramasinghe (Technical Dept.)</option>
-                            <option>Eng. S. Perera (Engineering Dept.)</option>
+                            <option>Dr. H. Madugalle (Technical Dept.)</option>
+                            <option>Eng. R. Kodithuwakku (Engineering Dept.)</option>
                         </select>
                         <div class="form-hint" style="color:#c62828;">⚠ Procurement Manager (PM) cannot prepare the TCE.</div>
                     </div>
@@ -1141,12 +1141,12 @@
 
             <div class="help-tip" style="border-left-color: #805ad5; background:#faf5ff;">
                 <div class="help-tip-title" style="color:#553c9a;">Two-Envelope Procedure</div>
-                SS-2E: Technical and Financial envelopes are separate. BEC evaluates Technical first (without seeing prices). Financial envelopes opened only for Substantially Responsive bidders. Non-Responsive bidders' financial envelopes returned unopened after award.
+                SS-2E: Technical and Financial envelopes are separate. TEC evaluates Technical first (without seeing prices). Financial envelopes opened only for Substantially Responsive bidders. Non-Responsive bidders' financial envelopes returned unopened after award.
             </div>
 
             <div class="help-tip" style="border-left-color: #c62828; background:#fff5f5;">
                 <div class="help-tip-title" style="color:#c62828;">Critical COI Rules</div>
-                The officer who prepares the technical specifications cannot serve on the BEC. The Procurement Manager cannot prepare the TCE. These are hard blocks in the system.
+                The officer who prepares the technical specifications cannot serve on the TEC. The Procurement Manager cannot prepare the TCE. These are hard blocks in the system.
             </div>
 
             <div class="template-section">
@@ -1166,12 +1166,12 @@
 <script>
     function updatePCThreshold(sel) {
         const hints = {
-            HLPC: 'HLPC authority: GOSL > LKR 750 Mn | Foreign > LKR 1,500 Mn',
-            SHLPC: 'SHLPC authority: GOSL > LKR 750 Mn | Foreign > LKR 1,500 Mn',
-            MPC: 'MPC authority: GOSL ≤ LKR 750 Mn | Foreign ≤ LKR 1,500 Mn | Shopping ≤ LKR 25 Mn',
-            DPC: 'DPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
-            PPC: 'PPC authority: GOSL ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
-            RPC: 'RPC authority: GOSL ≤ LKR 50 Mn | Foreign ≤ LKR 100 Mn | Shopping ≤ LKR 6 Mn'
+            HPC: 'HPC authority: NGA > LKR 750 Mn | Foreign > LKR 1,500 Mn',
+            SHPC: 'SHPC authority: NGA > LKR 750 Mn | Foreign > LKR 1,500 Mn',
+            XPC: 'XPC authority: NGA ≤ LKR 750 Mn | Foreign ≤ LKR 1,500 Mn | Shopping ≤ LKR 25 Mn',
+            CPC: 'CPC authority: NGA ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
+            PJC: 'PJC authority: NGA ≤ LKR 400 Mn | Foreign ≤ LKR 800 Mn | Shopping ≤ LKR 20 Mn',
+            RGC: 'RGC authority: NGA ≤ LKR 50 Mn | Foreign ≤ LKR 100 Mn | Shopping ≤ LKR 6 Mn'
         };
         document.getElementById('pcThresholdHint').textContent = hints[sel.value] || '';
     }
@@ -1182,7 +1182,7 @@
     function updateProcedureNote(sel) {
         const notes = {
             'SS-1E': 'Technical and financial proposals in one envelope, opened simultaneously.',
-            'SS-2E': 'Two-Envelope: Technical envelope evaluated first (prices hidden). Financial envelopes opened only for Substantially Responsive bidders at a separate BEC session.',
+            'SS-2E': 'Two-Envelope: Technical envelope evaluated first (prices hidden). Financial envelopes opened only for Substantially Responsive bidders at a separate TEC session.',
             '2S': 'Two-Stage: First stage — unpriced technical proposals; second stage — priced bids based on revised technical requirements.'
         };
         document.getElementById('procedureNote').textContent = notes[sel.value] || '';

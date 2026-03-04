@@ -718,7 +718,7 @@
                 <span>● Session Active</span>
                 <span class="timer" id="sessionTimer">01:23:45</span>
             </div>
-            <span class="user-info">Mr. Nuwan Medawaththa (Secretary)</span>
+            <span class="user-info">Mr. Isuru Dissanayake (Secretary)</span>
         </div>
     </div>
 
@@ -789,15 +789,15 @@
                         <tr>
                             <th class="req-header">Requirement</th>
                             <th class="bidder-header">
-                                Delmege Forsyth
+                                Northbridge Scientific
                                 <div class="bidder-price" id="price1">LKR 5,000,000</div>
                             </th>
                             <th class="bidder-header">
-                                Research Instruments
+                                Precision Devices
                                 <div class="bidder-price" id="price2">LKR 3,257,700</div>
                             </th>
                             <th class="bidder-header">
-                                P&T Trading
+                                Nexa Trading
                                 <div class="bidder-price" id="price3">LKR 2,696,000</div>
                             </th>
                             <th class="bidder-header">
@@ -805,7 +805,7 @@
                                 <div class="bidder-price" id="price4">LKR 3,050,000</div>
                             </th>
                             <th class="bidder-header">
-                                Bhoomi Tech
+                                Vertex Labs
                                 <div class="bidder-price" id="price5">LKR 1,378,250</div>
                             </th>
                         </tr>
@@ -825,7 +825,7 @@
                             <td class="decision-cell accept" onclick="showDetail(this)">
                                 <div class="cell-content">
                                     <span class="cell-icon">✓</span>
-                                    <span class="cell-value">Thermo Scientific</span>
+                                    <span class="cell-value">Cryon Scientific</span>
                                 </div>
                             </td>
                             <td class="decision-cell accept" onclick="showDetail(this)">
@@ -1255,7 +1255,7 @@
                         <input type="radio" name="deviation" value="debatable" onclick="document.getElementById('debatablePanel').style.display='block'; document.getElementById('monetaryPanel').style.display='none';">
                         <div>
                             <div class="deviation-option-title">Debatable Deviation</div>
-                            <div class="deviation-option-desc">BEC cannot reach consensus. Chair must resolve before evaluation can proceed.</div>
+                            <div class="deviation-option-desc">TEC cannot reach consensus. Chair must resolve before evaluation can proceed.</div>
                         </div>
                     </div>
                     <div class="monetary-loading" id="monetaryPanel" style="display:none;">
@@ -1264,7 +1264,7 @@
                         <button style="margin-top:6px; padding:4px 10px; background:#ed8936; color:white; border:none; border-radius:4px; font-size:11px; cursor:pointer;" onclick="alert('Zero loading confirmed.')">Confirm Zero Impact</button>
                     </div>
                     <div class="debatable-resolution" id="debatablePanel" style="display:none;">
-                        <span class="chair-only-badge">🔒 BEC Chair Only</span>
+                        <span class="chair-only-badge">🔒 TEC Chair Only</span>
                         <div style="font-size:12px; color:#553c9a; margin-bottom:6px;">Chair must resolve this debatable deviation with documented reasoning:</div>
                         <textarea style="width:100%; height:60px; padding:6px; border:1px solid #d6bcfa; border-radius:4px; font-size:12px;" placeholder="Enter reasoning for resolution..."></textarea>
                         <div class="resolution-btns">
@@ -1295,32 +1295,32 @@
                 <div class="attendance-list">
                     <label class="attendance-item">
                         <input type="checkbox" checked>
-                        <span>Dr. Jayantha Senanayaka</span>
+                        <span>Dr. Ruwan Karunatilake</span>
                         <span class="member-role">Chair</span>
                     </label>
                     <label class="attendance-item">
                         <input type="checkbox" checked>
-                        <span>Mr. Nuwan Medawaththa</span>
+                        <span>Mr. Isuru Dissanayake</span>
                         <span class="member-role">Secretary</span>
                     </label>
                     <label class="attendance-item">
                         <input type="checkbox" checked>
-                        <span>Snr. Prof. B.G.D.N.K. de Silva</span>
+                        <span>Snr. Prof. K.M.R.P. Wijenayake</span>
                         <span class="member-role">Member</span>
                     </label>
                     <label class="attendance-item">
                         <input type="checkbox" checked>
-                        <span>Dr. Dananjaya Perera</span>
+                        <span>Dr. Kasun Pathirana</span>
                         <span class="member-role">Member</span>
                     </label>
                     <label class="attendance-item">
                         <input type="checkbox">
-                        <span>Dr. Peshala Gunasekara</span>
+                        <span>Dr. Naveen Abeysinghe</span>
                         <span class="member-role">Member</span>
                     </label>
                     <label class="attendance-item">
                         <input type="checkbox" checked>
-                        <span>Dr. Chamith Hewawaduge</span>
+                        <span>Dr. Sahan Ekanayake</span>
                         <span class="member-role">Member</span>
                     </label>
                 </div>
@@ -1437,17 +1437,17 @@
         // Stage switching
         function switchStage(stage) {
             const stageMessages = {
-                1: 'Stage 1 — Data Collection\n\nThree sub-tabs:\n• 1a Basic Data Sheet (auto-populated, BEC confirms)\n• 1b BEC Bid Opening Record (per-bidder: security, amounts, alternatives, remarks)\n• 1c Document Completeness Grid (Y/N/NA per bidder per document)',
+                1: 'Stage 1 — Data Collection\n\nThree sub-tabs:\n• 1a Basic Data Sheet (auto-populated, TEC confirms)\n• 1b TEC Bid Opening Record (per-bidder: security, amounts, alternatives, remarks)\n• 1c Document Completeness Grid (Y/N/NA per bidder per document)',
                 '2a': 'Stage 2a — Commercial Terms Responsiveness\n\nGrid: Commercial requirements × Bidders\n• Cells: C (Compliant) / NC (Non-Compliant)\n• Conclusion row: R (Responsive) / NR (Non-Responsive)\n• Standard requirements: Power of Attorney, Signatures, JV, Eligibility, Bid Validity, Bid Security (amount/validity/format), Contract Type, Payment Terms\n\nBidders marked NR here are excluded from Stage 3 onwards.',
-                '2b': 'Stage 2b — Technical Requirements Responsiveness (current view)\n\nFull evaluation grid as shown. Deviation types:\n• Major: auto-set for Compulsory rejects; bidder Non-Responsive\n• Minor: monetary loading required (can be LKR 0, must be confirmed)\n• Debatable: BEC Chair must resolve before item can complete',
-                3: 'Stage 3 — Detailed Price Evaluation (14-step Worksheet)\n\n1. Exclude VAT/contingencies/provisional sums\n2. Arithmetic error correction (words prevail over figures)\n3. Unconditional discounts\n4. Omissions (priced at average of other bidders)\n5. Delivery period deviations\n6. Minor deviation monetary loadings (auto-linked from Stage 2b)\n7. Inland transport (imported Goods CIF/FOB)\n8. Life cycle costing (if specified in Procurement Documents)\n9. Currency conversion (CBSL selling rate, bid closing date)\n10. Domestic preference (GOSL Goods: +20% to foreign bids; Works: +15%)\n11. Re-rank (lowest Evaluated Price = Rank 1)\n12. After-sales services (if specified)\n13. Unrealistic price assessment\n14. Clarification price effects\n\nOutput: Quoted Price → Evaluated Price per bidder. Rank 1 proceeds to Stage 4.',
+                '2b': 'Stage 2b — Technical Requirements Responsiveness (current view)\n\nFull evaluation grid as shown. Deviation types:\n• Major: auto-set for Compulsory rejects; bidder Non-Responsive\n• Minor: monetary loading required (can be LKR 0, must be confirmed)\n• Debatable: TEC Chair must resolve before item can complete',
+                3: 'Stage 3 — Detailed Price Evaluation (14-step Worksheet)\n\n1. Exclude VAT/contingencies/provisional sums\n2. Arithmetic error correction (words prevail over figures)\n3. Unconditional discounts\n4. Omissions (priced at average of other bidders)\n5. Delivery period deviations\n6. Minor deviation monetary loadings (auto-linked from Stage 2b)\n7. Inland transport (imported Goods CIF/FOB)\n8. Life cycle costing (if specified in Procurement Documents)\n9. Currency conversion (NMB selling rate, bid closing date)\n10. Domestic preference (NGA Goods: +20% to foreign bids; Works: +15%)\n11. Re-rank (lowest Evaluated Price = Rank 1)\n12. After-sales services (if specified)\n13. Unrealistic price assessment\n14. Clarification price effects\n\nOutput: Quoted Price → Evaluated Price per bidder. Rank 1 proceeds to Stage 4.',
                 4: 'Stage 4 — Post-Qualification (applied to Rank 1 bidder)\n\nStep A — Unbalanced Bid Check:\n• Flag if any unit price >50% above average AND impact >5% of total bid\n• For contracts ≤ LKR 750 Mn: request rate analysis/justification\n\nStep B — PQ Assessment (Goods):\n• Manufacturer\'s Authorisation Certificate (MAC)\n• After-sales and maintenance capability\n• Financial capability (audited accounts)\n• Relevant past experience (similar Goods supplied)\n\nIf Fail → move to next-lowest bidder and repeat.'
             };
             alert(`Switching to Stage ${stage}\n\n${stageMessages[stage] || 'Stage view.'}`);
         }
 
         function showClarificationModal() {
-            alert('Clarification panel — one type only:\n\n1. Bidder Clarification\n   Direction: BEC Secretary drafts → BEC Chair approves → PM sends to bidder → Bidder responds → PM enters response → BEC reviews & closes\n   RESTRICTION: Must NOT modify contract price, delivery period, conditions of contract, technical specifications, or any substantive aspect of the bid.\n\nNOTE: "Internal Technical Consultation" (requestor advisory) has been REMOVED — it has no basis in the National Procurement Manual 2024 Ch.07.\n\nFor technical expertise, use External Technical Expert Advisory (requires PC approval — managed from Session Controls).\n\nCell is BLOCKED for decisions while a clarification thread is active on it.');
+            alert('Clarification panel — one type only:\n\n1. Bidder Clarification\n   Direction: TEC Secretary drafts → TEC Chair approves → PM sends to bidder → Bidder responds → PM enters response → TEC reviews & closes\n   RESTRICTION: Must NOT modify contract price, delivery period, conditions of contract, technical specifications, or any substantive aspect of the bid.\n\nNOTE: "Internal Technical Consultation" (requestor advisory) has been REMOVED — it has no basis in the National Procurement Manual 2024 Ch.07.\n\nFor technical expertise, use External Technical Expert Advisory (requires PC approval — managed from Session Controls).\n\nCell is BLOCKED for decisions while a clarification thread is active on it.');
         }
     </script>
 </body>
