@@ -1,8 +1,8 @@
-.claude/
-references/
-SPEC_GAPS_v3_1.md
-GAP_ANALYSIS.md
-COMPLIANCE_CITATION_MAP.md
-CLAUDE.md
-AI_VALIDATION_RULES.md
-tenderstudio_ui_wireframes.zip
+# Ignore everything
+*
+
+# Except these
+!.gitignore
+!wireframes/
+!wireframes/**
+!SYSTEM_SPECIFICATION.md
