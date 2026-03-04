@@ -829,16 +829,40 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Funding Source <span class="required">*</span></label>
-                        <select class="form-input">
-                            <option selected>GOSL-Funded</option>
-                            <option>Foreign-Funded (FFA)</option>
-                            <option>Mixed</option>
+                        <select class="form-input" onchange="showFfaPanel(this)">
+                            <option value="gosl" selected>GOSL-Funded</option>
+                            <option value="ffa">Foreign-Funded (FFA)</option>
+                            <option value="mixed">Mixed (GOSL + FFA)</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label class="form-label">Total Contract Estimate (TCE) <span class="required">*</span></label>
                         <input type="text" class="form-input" value="12,500,000" placeholder="LKR (masked until bid opening)">
                         <div class="form-hint">TCE is masked from all users until bid opening. Must NOT be prepared by the Procurement Manager.</div>
+                    </div>
+                </div>
+
+                <!-- FFA Guidelines Panel — shown only when Foreign-Funded selected -->
+                <div id="ffaPanel" style="display:none; margin-bottom:20px; padding:14px 16px; background:#e8f4fd; border:1px solid #3182ce; border-radius:8px; font-size:12px;">
+                    <div style="font-weight:600; color:#1a365d; margin-bottom:8px;">📋 Foreign Funding Agency (FFA) Guidelines Review Required</div>
+                    <p style="color:#2d3748; margin-bottom:10px;">When procurement is foreign-funded, the PE must review FFA guidelines against National Procurement Manual 2024 objectives (Manual §1.4.1):</p>
+                    <ul style="color:#2d3748; margin-left:16px; margin-bottom:12px; line-height:1.7;">
+                        <li><strong>Foreign Grant:</strong> PE <em>may</em> follow FFA guidelines where they differ from the Manual, if the grant agreement permits.</li>
+                        <li><strong>Bilateral/Multilateral Loan or Credit:</strong> PE must <em>review</em> FFA guidelines. Follow Manual unless loan agreement explicitly specifies FFA guidelines prevail.</li>
+                    </ul>
+                    <div style="margin-bottom:8px;">
+                        <label style="font-weight:600; display:block; margin-bottom:4px;">Financing Type <span style="color:red;">*</span></label>
+                        <select style="width:100%; padding:6px 10px; border:1px solid #90cdf4; border-radius:5px; font-size:12px;">
+                            <option value="">— Select —</option>
+                            <option>Foreign Grant</option>
+                            <option>Bilateral Loan / Credit</option>
+                            <option>Multilateral Loan / Credit (e.g., World Bank, ADB)</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="font-weight:600; display:block; margin-bottom:4px;">FFA Guideline Review Outcome <span style="color:red;">*</span></label>
+                        <textarea style="width:100%; padding:6px 10px; border:1px solid #90cdf4; border-radius:5px; font-size:12px; min-height:60px;" placeholder="e.g., FFA guidelines reviewed — no conflict with Manual. Standard Manual procedures apply. / FFA document evaluation method applies per loan agreement clause 5.4."></textarea>
+                        <div style="color:#666; font-size:11px; margin-top:3px;">This review must be documented in PC minutes and recorded here before tender creation can proceed.</div>
                     </div>
                 </div>
 
@@ -1150,6 +1174,10 @@
             RPC: 'RPC authority: GOSL ≤ LKR 50 Mn | Foreign ≤ LKR 100 Mn | Shopping ≤ LKR 6 Mn'
         };
         document.getElementById('pcThresholdHint').textContent = hints[sel.value] || '';
+    }
+    function showFfaPanel(sel) {
+        document.getElementById('ffaPanel').style.display =
+            (sel.value === 'ffa' || sel.value === 'mixed') ? 'block' : 'none';
     }
     function updateProcedureNote(sel) {
         const notes = {

@@ -1,7 +1,7 @@
 # TenderStudio — Complete System Specification
 
-**Version 5.0** | The Definitive Developer Reference
-**Date:** 2026-02-26
+**Version 5.1** | The Definitive Developer Reference
+**Date:** 2026-02-27
 **Status:** Authoritative — Self-Contained — No Companion Documents Required
 **Legal Authority:** National Procurement Manual 2024, National Procurement Commission, Sri Lanka
 
@@ -9,8 +9,8 @@
 
 ## Table of Contents
 
-1. [System Purpose and Scope](#1-system-purpose-and-scope)
-2. [Legal and Compliance Framework](#2-legal-and-compliance-framework)
+1. [System Purpose and Scope](#1-system-purpose-and-scope) — incl. §1.5 Procurement Principles, §1.6 Contract Categories & Scope, §1.7 FFA Guidelines
+2. [Legal and Compliance Framework](#2-legal-and-compliance-framework) — incl. §2.17 Ethics, COI Definition & NCA
 3. [System Architecture](#3-system-architecture)
 4. [Organizational Roles and Permissions](#4-organizational-roles-and-permissions)
 5. [Complete Data Model](#5-complete-data-model)
@@ -64,6 +64,51 @@ The system replaces paper-based processes with structured digital workflows, eli
 4. **Forensic audit trail.** Every state change is timestamped, attributed, and immutable.
 5. **Offline-first.** All evaluation work is possible offline; automatic sync on reconnection.
 6. **Legal compliance.** Every enforcement rule in this document traces to the National Procurement Manual 2024.
+
+### 1.5 National Procurement Principles (Manual §1.2(c))
+
+TenderStudio is designed to uphold all seven principles mandated by the National Procurement Manual 2024. These principles are the foundation for every rule in this specification:
+
+| # | Principle | What it means for TenderStudio |
+|---|---|---|
+| 1 | **Economy, Efficiency, Effectiveness, Equity and Value for Money** (while complying with all applicable laws) | Evaluation workflows are structured to compare bids objectively and identify the best value — not merely the lowest price |
+| 2 | **Fair, equal and maximum opportunity to compete** | Evaluation criteria are fixed before bid opening; no post-opening changes to requirements; all responsive bidders evaluated under identical criteria |
+| 3 | **Expeditious execution of procurement** | System tracks dates and deadlines; alerts PM when milestones are overdue; minimum bidding periods enforced |
+| 4 | **Transparency throughout the process** | Audit trail is immutable; evaluation decisions are recorded with reasoning; report auto-generated from evaluation data |
+| 5 | **Sustainable Public Procurement (SPP)** | Contract type and evaluation criteria may include sustainability parameters; SPP considerations are a category in the specification library |
+| 6 | **Confidentiality** | Evaluation proceedings are restricted to committee members; COI declarations enforce commercial-in-confidence obligations; bid prices hidden from BEC until Chair enables visibility |
+| 7 | **Integrity** | COI declarations mandatory for all officers involved; NCA mandatory for all bidders; fraud/corruption grounds for debarment |
+
+### 1.6 Contract Categories and Scope of Application
+
+**Three Contract Categories (Manual §1.2(b)):**
+
+| Category | Definition | Examples |
+|---|---|---|
+| **Goods** | Commodities, raw materials, products, equipment (and associated services: installation, maintenance, training — incidental to the main supply) | Laboratory equipment, vehicles, computers, reagents |
+| **Works** | Construction, reconstruction, demolition, repair, renovation, installation of any plant/equipment where construction is the principal object | Buildings, roads, bridges, plumbing, electrical fit-out |
+| **Non-Consulting Services** | Services that do not require specialised professional knowledge and can be evaluated primarily on price | Janitorial/cleaning, security guarding, routine machinery maintenance, cargo clearance, catering, transport/haulage |
+
+> **Consulting Services** (specialist professional/advisory services) are governed by a separate Manual and are **out of scope** for TenderStudio in its current version.
+
+**Institutions to which the Manual applies (Manual §1.4):**
+- All Ministries and Government Departments
+- Public Corporations and Statutory Bodies
+- Local Authorities
+- Government Business Undertakings
+- Government-owned Companies (>50% government shareholding)
+- Provincial Councils (with amendments per Provincial Finance Commission authority)
+
+### 1.7 Foreign Funding Agency (FFA) Guidelines (Manual §1.4.1)
+
+When a tender is financed externally, the following rule applies:
+
+| Funding Type | Rule |
+|---|---|
+| **Foreign Grant** | PE may follow FFA guidelines where they differ from the Manual, provided the grant agreement permits |
+| **Bilateral / Multilateral Loan or Credit** | PE must **review** FFA guidelines against Manual objectives. If FFA guidelines conflict with the Manual, the PE follows the Manual — unless the loan/credit agreement explicitly specifies that FFA guidelines prevail. The PE must document the review and its rationale. |
+
+**In TenderStudio:** When `funding_source = Foreign-Funded`, the Project Setup screen displays a warning panel prompting the PM to confirm whether FFA guidelines apply and to record the outcome of the FFA-vs-Manual review.
 
 ---
 
@@ -275,6 +320,68 @@ Debarment restricts a bidder/supplier/contractor from public procurement for a s
 
 **Debarment appeal:** Within 5 working days of determination. If CAO made determination → appeal to Secretary to General Treasury. If AO made determination → appeal to CAO. Appeal committee concludes within 21 calendar days.
 
+### 2.17 Procurement Ethics and Integrity (Manual §1.5)
+
+#### 2.17.1 General Integrity Obligation
+
+All officers involved in any aspect of a procurement process must conduct themselves with the **highest degree of integrity** throughout. This obligation covers the entire lifecycle — from inception of requirements through contract close-out.
+
+#### 2.17.2 Conflict of Interest — Definition and Grounds
+
+An officer has a conflict of interest in any of the following four situations (Manual §1.5.4):
+
+| Ground | Description |
+|---|---|
+| **(a) Financial / Ownership** | The officer, their close relatives, or business associates have ownership, shareholding, employment, or any other direct or indirect financial interest in a bidding entity — or in any entity connected to the outcome of the procurement |
+| **(b) Prior Involvement** | The officer was involved in preparing the technical specifications, bid documents, or evaluation criteria for this procurement — or will be involved in implementing the resulting contract |
+| **(c) Organisational Relationship** | The officer's employing organisation has a close business or family relationship with key personnel of the PE who are involved in or influence the procurement decision |
+| **(d) Other Specified Situations** | Any other situation described in the Procurement Documents as constituting a conflict of interest for this specific procurement |
+
+**Obligation on declaration:** An officer who identifies a conflict must immediately declare it to the appointing authority and **disassociate** from all further involvement in that procurement.
+
+#### 2.17.3 COI Declaration Forms — Annexure I and Annexure II
+
+**Who must sign what, and when:**
+
+| Form | Who Signs | When | On Conflict Declared |
+|---|---|---|---|
+| **Annexure I** (PC/BEC Member COI) | All PC members, all BEC members, BOC Chairman | **Before commencing** any role in the procurement process | Member must **request to be replaced** and disassociate immediately |
+| **Annexure II** (Staff Officer / Supporting Staff COI) | All PMD staff, BEC secretaries, technical assistants, and any other officer providing supporting services to any committee | **Before commencing** any supporting role in the procurement process | Staff officer must **inform the appointing authority**; the appointing authority decides on replacement |
+
+> **Key distinction:** Annexure I members (committee members) must actively request their own replacement when a conflict arises. Annexure II staff (supporting officers) only need to inform the appointing authority — the authority decides whether to replace them.
+
+**Annexure I — Five Undertakings:**
+1. Not to discuss evaluation proceedings with any party other than other PC/BEC members **officially involved in this tender** — commercial-in-confidence obligation
+2. No shareholding, close relative relationship, or direct/indirect financial interest in any bidder
+3. To declare and **request replacement** if a conflict of interest arises during the process
+4. Maintain strict confidentiality of proceedings, bids, evaluation decisions, and all tender information
+5. Not to use their position or information obtained for personal gain or to advantage any party
+
+**Annexure II — Five Undertakings (same as Annexure I except item 3):**
+1. Not to discuss evaluation proceedings with any party other than officially involved PC/BEC members
+2. No shareholding, close relative relationship, or direct/indirect financial interest in any bidder
+3. To **inform the appointing authority** if a conflict of interest arises (no request for replacement — the authority decides)
+4. Maintain strict confidentiality of proceedings, bids, evaluation decisions, and all tender information
+5. Not to use their position or information obtained for personal gain or to advantage any party
+
+**"Before commencing" rule:** COI declarations must be signed **before the officer begins any procurement-related work** — not only at the first formal committee meeting. For BEC members, this means before any evaluation session. For PC members, before budget approval discussion. For BOC members, before entering the bid opening venue.
+
+#### 2.17.4 Non-Collusion Affidavit (NCA) — Bidder Obligation
+
+The NCA (Annexure III of Manual Chapter 01) is required from all bidders in competitive procurements. The bidder swears or affirms, **under penalty for perjury**:
+
+1. The bid price was **not arrived at through combination, collusion, or price-fixing** with any other bidder
+2. The bidder **did not prevent or induce** any other person from bidding or from withdrawing their bid
+3. The bid was **made without reference** to any other bid submitted for the same procurement
+
+Additionally, the bidder confirms that **no rebate, gift, commission, or other inducement** has been or will be paid in connection with the bid.
+
+**Execution requirement:** The affidavit must be **sworn** before a **Justice of the Peace** or **Commissioner of Oaths** — a signature alone is insufficient. The system tracks `nca_sworn` (boolean) and `nca_sworn_before` (name and designation of JP or Commissioner).
+
+#### 2.17.5 Sanctions for Prohibited Practices
+
+Bidders or officers found to have engaged in fraud, corruption, collusion, coercion, or obstruction in connection with any procurement may be subject to debarment under Chapter 10 (see §2.16). The PE's CAO/AO must investigate any allegation of prohibited practices and may impose sanctions following the Chapter 10 process. TenderStudio's immutable audit trail supports such investigations.
+
 ---
 
 ## 3. System Architecture
@@ -470,7 +577,12 @@ An item is **Complete** only when: all evaluation cells have final decisions, al
 
 **Compulsory rule:** A Compulsory (C) requirement that receives a Reject decision is automatically classified as a **Major** deviation. This is system-enforced and cannot be overridden. The bidder becomes Non-Responsive for that item.
 
-### 5.5 Requestor (Internal Equipment Requestor)
+### 5.5 Requestor (Internal Equipment Requestor — Record Only)
+
+The Requestor entity records the user department contact who originated the procurement request. This information is used for:
+- Pre-bid meeting notification (did the requestor attend?)
+- Cross-referencing which department needs the equipment
+- Report context (Section 2 Introduction identifies the requesting department)
 
 | Field | Type | Notes |
 |---|---|---|
@@ -479,10 +591,10 @@ An item is **Complete** only when: all evaluation cells have final decisions, al
 | `name` | String | |
 | `designation` | String | |
 | `department` | String | |
-| `email` | String | For Internal Technical Consultation messages |
+| `email` | String | Contact for pre-bid / addendum notification only |
 | `phone` | String | |
 
-Requestor input via Internal Technical Consultations is **advisory only**. BEC makes all compliance decisions.
+> **Evaluation restriction:** The Requestor (user department) has **no role in BEC evaluation**. Contacting the requestor for input during BEC evaluation would constitute a Conflict of Interest under Ground (b) (§2.17.2) if they prepared the specifications. BEC cannot consult them. The only advisory mechanism available to BEC is External Technical Expert Advisory with PC approval (§9.1).
 
 ### 5.6 Bidder (Organisation-wide Master Record)
 
@@ -732,13 +844,20 @@ System warns if `days_before_closing < 3`.
 
 **COI Rules:**
 
-1. **Mandatory at first meeting:** BEC members sign Annexure I (Member COI). Supporting staff (PMD officers, secretaries, other staff assisting BEC) sign Annexure II (Staff COI). System blocks progression past Stage 8 until all required COI records have `signed_date` set.
+1. **Mandatory before commencing:** All committee members (BEC, BOC, PC) sign Annexure I before their first act in the procurement (before first BEC session, before bid opening venue entry, before budget approval discussion). All supporting staff (PMD officers, BEC secretaries, technical assistants) sign Annexure II before beginning any supporting work. The system blocks progression past each lifecycle stage until required COI records have `signed_date` set:
+   - Stage 8 (BEC Evaluation): all BEC Annexure I and Annexure II records must be signed
+   - Bid Opening: all BOC Annexure I records must be signed
+   - PC approval events: all PC Annexure I records must be signed
 
-2. **Mid-evaluation conflict:** If conflict is declared after evaluation has begun: (a) the officer is immediately set to read-only; (b) all their prior cell decisions are flagged for BEC Chair review; (c) PM and System Administrator are notified; (d) an immutable audit log entry is created; (e) BEC Chair determines whether prior decisions need reconsidering.
+2. **Annexure I vs Annexure II on conflict:** When `conflict_declared = true`: Annexure I officers (members) must request their own replacement — system marks `recused = true` and notifies PM and Admin to arrange a replacement. Annexure II officers (staff) only need to inform the appointing authority — system notifies Admin; the appointing authority decides on replacement. The distinction is enforced in the UI: Annexure I conflict triggers a mandatory replacement workflow; Annexure II conflict triggers a notification workflow only.
 
-3. **Spec preparer check:** The system checks every BEC nominee against `tender.spec_preparer_id`. If matched, a conflict warning is raised before the assignment is confirmed.
+3. **Mid-evaluation conflict:** If a conflict is declared after evaluation has begun: (a) the officer is immediately set to read-only; (b) all their prior cell decisions are flagged for BEC Chair review; (c) PM and System Administrator are notified; (d) an immutable audit log entry is created; (e) BEC Chair determines whether prior decisions need reconsidering.
 
-4. **BOC COI:** BOC members also sign COI declarations before the bid opening session.
+4. **Spec preparer check:** The system checks every BEC nominee against `tender.spec_preparer_id`. If matched, a conflict warning (Ground (b) — prior involvement in spec preparation) is raised before the assignment is confirmed. Assignment cannot proceed without override documented by PM.
+
+5. **Commercial-in-confidence obligation:** All Annexure I signatories undertake not to discuss evaluation proceedings with any person outside the officially involved committee for this tender. The system enforces this by restricting evaluation data access to assigned members only. Any unauthorised sharing of evaluation data is logged as a security event.
+
+6. **BOC COI:** BOC members also sign Annexure I COI declarations before entering the bid opening venue. BOC supporting staff sign Annexure II. Same before-commencing rule applies.
 
 ### 5.16 BOC Opening Record
 
@@ -777,16 +896,17 @@ System warns if `days_before_closing < 3`.
 
 ### 5.17 Clarification Thread
 
+Only Bidder-type clarification threads are supported (see §9.1). Internal Technical Consultation has been removed — it has no basis in the National Procurement Manual 2024 (Chapter 07).
+
 | Field | Type | Notes |
 |---|---|---|
 | `thread_id` | UUID | |
 | `tender_id` | UUID | |
-| `thread_type` | Enum | Bidder \| Internal-Technical-Consultation |
+| `thread_type` | Enum | Bidder (only) |
 | `level` | Enum | Requirement \| Item |
 | `requirement_id` | UUID | Nullable; set if level = Requirement |
 | `item_id` | UUID | |
-| `bidder_id` | UUID | Set if thread_type = Bidder |
-| `requestor_id` | UUID | Set if thread_type = Internal-Technical-Consultation |
+| `bidder_id` | UUID | The bidder to whom the clarification is addressed |
 | `status` | Enum | Draft \| Pending-Chair-Approval \| Sent \| Response-Received \| Closed |
 | `closure_decision` | Enum | Pending \| Satisfied \| Not-Satisfied |
 | `messages` | List of ClarificationMessage | |
@@ -1448,14 +1568,28 @@ If any clarification obtained during evaluation has a price effect (e.g., confir
 
 ## 9. Clarification System
 
-### 9.1 Two Types of Clarification Threads
+### 9.1 Clarification Thread — One Type Only
+
+The National Procurement Manual 2024 (Chapter 07) permits BEC to seek clarification **from bidders only**, through the PE (PM). Direct BEC-to-bidder correspondence is not permitted. The Manual does not provide for internal clarification from equipment requestors or specification preparers; in fact, those officers are excluded from evaluation involvement under COI Ground (b) (§2.17.2).
+
+**The only clarification thread type:**
 
 | Type | Purpose | Direction |
 |---|---|---|
-| Bidder Clarification | Seek clarification from a bidder on their submission | BEC drafts → Chair approves → PM sends → bidder responds → PM enters response → BEC reviews and closes |
-| Internal Technical Consultation | Seek advisory input from the internal equipment requestor | BEC drafts → Chair approves → PM sends internally → requestor responds → BEC reviews (advisory only — BEC decides) |
+| **Bidder Clarification** | Seek clarification from a bidder on their submission | BEC Secretary drafts → BEC Chair approves → PM sends to bidder → bidder responds → PM enters response → BEC reviews and closes |
 
-Internal Technical Consultations are labelled "Advisory — BEC decides" throughout the system. The BEC Chair's compliance decision is final regardless of requestor input.
+**External Technical Expert Advisory (separate workflow — not a clarification thread):**
+
+The Manual permits BEC to obtain advice from external technical experts when the BEC's collective expertise is insufficient to evaluate a specific technical matter. This is **not** a clarification to a bidder; it is a formal consultation with an independent external expert.
+
+| Requirement | Rule |
+|---|---|
+| PC approval | Required before engaging any external expert |
+| Expert independence | The external expert must have no COI with any bidder and cannot be the tender's specification preparer |
+| Advisory nature | Expert's opinion is recorded and considered by BEC; BEC Chair's decision is final |
+| Documentation | Expert's credentials, opinion, and PC approval are recorded in the audit trail and included in the BER |
+
+> **Removed from this version:** "Internal Technical Consultation" (advisory from requestor/user department) has been removed as it has no basis in the National Procurement Manual 2024. Requestor/user department involvement in evaluation would constitute a conflict of interest under COI Ground (b) if they prepared the specifications.
 
 ### 9.2 Two Levels of Threads
 
@@ -1729,13 +1863,16 @@ If Fail: "Move to next bidder" button. System archives the failed PQ result and 
 
 Side panel accessible from any evaluation stage.
 
-Two tabs: **Bidder Clarifications** | **Internal Technical Consultations** (labelled "Advisory")
+Single tab: **Bidder Clarifications** (Internal Technical Consultations removed — see §9.1).
 
 Thread list with status badges. Thread detail: full message history, current status, closure decision.
 
-Draft message area: template placeholder auto-fill by AI; substantive content typed by Secretary. Restriction notice displayed prominently.
+Draft message area: template placeholder auto-fill by AI; substantive content typed by Secretary. Restriction notice displayed prominently:
+> "Clarifications must not modify bid price, delivery period, conditions of contract, technical specifications, or any substantive aspect of the bid."
 
 Approval status: Draft → Awaiting Chair Approval → Approved → Sent → Response Received → Closed.
+
+**External Technical Expert Advisory** (separate section below thread list): Lists any PC-approved expert consultations for this item. Fields: Expert name, credentials, PC approval reference, opinion summary, date. Read-only in this panel; managed from the Evaluation Session Controls.
 
 ### 12.7 Report Preview
 
@@ -1961,7 +2098,7 @@ Every event logged with:
 | ICB | International Competitive Bidding |
 | IFB | Invitation for Bids |
 | INCOTERM | International Commercial Term of Carriage (EXW, FOB, CIF, CIP, DDP) |
-| Internal Technical Consultation | Advisory input sought from the internal equipment requestor; replaces former term "Requestor Clarification"; advisory only |
+| External Technical Expert Advisory | Advisory consultation with an independent external expert, approved by PC; the expert's opinion is recorded but BEC Chair's decision is final; the requestor/spec preparer cannot serve as the expert (COI Ground (b)) |
 | ITB | Instructions to Bidders |
 | LCC | Life Cycle Costing |
 | LIB | Limited International Bidding |
